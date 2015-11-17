@@ -1,0 +1,40 @@
+{
+  "name": "xpressengine-plugin/claim",
+  "description": "XpressEngine's plugin for bundle (XE)",
+  "keywords": ["xpressengine bundle", "XE claim"],
+  "version": "0.3.0",
+  "support": {
+    "email": "developers@xpressengine.com"
+  },
+  "authors": [
+    {
+      "name": "XE Team",
+      "email": "developers@xpressengine.com",
+      "homepage": "http://xpressengine.io",
+      "role": "Developer"
+    }
+  ],
+  "license": "LGPL",
+  "type": "xpressengine-plugin",
+  "extra": {
+    "xpressengine": {
+      "title": "신고",
+      "component": {
+        "claim/settingsSkin/claim@default": {
+          "class": "Xpressengine\\Plugins\\Claim\\Skin\\SettingsSkin",
+          "name": "신고하기 관리자 기본 스킨",
+          "description": "기본스킨."
+        }
+      }
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0",
+    "mockery/mockery": "dev-master@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "Xpressengine\\Plugins\\Claim\\": "src/"
+    }
+  }
+}
