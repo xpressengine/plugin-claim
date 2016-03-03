@@ -53,7 +53,7 @@ class Plugin extends AbstractPlugin
     /**
      * @return boolean
      */
-    public function checkUpdated()
+    public function checkUpdated($installedVersion = NULL)
     {
         // TODO: Implement checkUpdate() method.
     }
