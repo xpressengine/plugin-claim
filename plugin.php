@@ -74,7 +74,7 @@ class Plugin extends AbstractPlugin
         $app['xe.claim.handler'] = $app->share(
             function ($app) {
                 $repository = new ClaimRepository(XeDB::connection());
-                $handler = new Handler($repository, app('xe.config'), app('xe.members'));
+                $handler = new Handler($repository, app('xe.config'), app('xe.user'));
                 return $handler;
             }
         );

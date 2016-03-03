@@ -15,8 +15,8 @@ namespace Xpressengine\Plugins\Claim;
 
 use Xpressengine\Counter\Counter;
 use Xpressengine\Config\ConfigManager;
-use Xpressengine\Member\Entities\MemberEntityInterface;
-use Xpressengine\Member\Repositories\MemberRepositoryInterface as Member;
+use Xpressengine\User\UserHandler as User;
+use Xpressengine\User\UserInterface;
 
 
 /**
@@ -42,9 +42,9 @@ class Handler
     protected $configManager;
 
     /**
-     * @var Member
+     * @var User
      */
-    protected $member;
+    protected $user;
 
     /**
      * @var string
@@ -61,13 +61,13 @@ class Handler
      *
      * @param ClaimRepository $repo          repository
      * @param ConfigManager   $configManager config manager
-     * @param Member          $member        member
+     * @param User            $user          member
      */
-    public function __construct(ClaimRepository $repo, ConfigManager $configManager, Member $member)
+    public function __construct(ClaimRepository $repo, ConfigManager $configManager, User $user)
     {
         $this->repo = $repo;
         $this->configManager = $configManager;
-        $this->member = $member;
+        $this->user = $user;
     }
 
     /**
@@ -96,11 +96,11 @@ class Handler
      * 신고 추가
      *
      * @param string        $targetId targetId
-     * @param MemberEntityInterface $author   user instance
+     * @param UserInterface $author   user instance
      * @param string        $shortCut 바로가기
      * @return void
      */
-    public function add($targetId, MemberEntityInterface $author, $shortCut)
+    public function add($targetId, UserInterface $author, $shortCut)
     {
         $args =[
             'claimType' => $this->claimType,
@@ -133,10 +133,10 @@ class Handler
      * 신고 삭제
      *
      * @param string        $targetId targetId
-     * @param MemberEntityInterface $author   user instance
+     * @param UserInterface $author   user instance
      * @return void
      */
-    public function removeByTargetId($targetId, MemberEntityInterface $author)
+    public function removeByTargetId($targetId, UserInterface $author)
     {
         $this->repo->deleteByUserId($author->getId(), $this->claimType, $targetId);
     }
@@ -145,10 +145,10 @@ class Handler
      * 신고 여부
      *
      * @param string        $targetId targetId
-     * @param MemberEntityInterface $author   user instance
+     * @param UserInterface $author   user instance
      * @return bool
      */
-    public function invoked($targetId, MemberEntityInterface $author)
+    public function invoked($targetId, UserInterface $author)
     {
 
         return $this->repo->fetchByUserId($author->getId(), $this->claimType, $targetId) !== null;
@@ -174,7 +174,7 @@ class Handler
             }
         }
 
-        $users = $this->member->findAll($userIds);
+        $users = $this->user->users()->find($userIds);
         $usersByUserId = [];
         foreach ($users as $user) {
             $usersByUserId[$user->id] = $user;
