@@ -29,21 +29,6 @@ use Auth;
 class CommentClaimItem extends AbstractToggleMenu
 {
     /**
-     * @var string
-     */
-    public static $id = 'comment_service/toggleMenu/claim@commentClaimItem';
-
-    /**
-     * get id
-     *
-     * @return string
-     */
-    public static function getId()
-    {
-        return self::$id;
-    }
-
-    /**
      * get name
      * @return string
      */

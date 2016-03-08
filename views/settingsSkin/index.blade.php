@@ -31,7 +31,7 @@
             <tbody>
             @foreach($paginate as $item)
                 <tr>
-                    <td><b>[{{ $item['user']->getDisplayName() }}]</b></td>
+                    <td><b>[{{ $item->user->getDisplayName() }}]</b></td>
                     <td>{{ $item['claimType'] }} <a href="{{ $item['shortCut'] }}" class="btn btn-default" target="_blank">바로가기</a></td>
                     <td>{{ $item['createdAt'] }}</td>
                     <td>{{ $item['ipaddress'] }}</td>

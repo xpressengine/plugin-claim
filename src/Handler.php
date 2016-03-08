@@ -15,8 +15,9 @@ namespace Xpressengine\Plugins\Claim;
 
 use Xpressengine\Counter\Counter;
 use Xpressengine\Config\ConfigManager;
-use Xpressengine\Member\Entities\MemberEntityInterface;
-use Xpressengine\Member\Repositories\MemberRepositoryInterface as Member;
+use Xpressengine\Plugins\Claim\Models\ClaimLog;
+use Xpressengine\User\Models\User;
+use Xpressengine\User\UserInterface;
 
 
 /**
@@ -32,19 +33,9 @@ use Xpressengine\Member\Repositories\MemberRepositoryInterface as Member;
 class Handler
 {
     /**
-     * @var ClaimRepository
-     */
-    protected $repo;
-
-    /**
      * @var ConfigManager
      */
     protected $configManager;
-
-    /**
-     * @var Member
-     */
-    protected $member;
 
     /**
      * @var string
@@ -59,15 +50,11 @@ class Handler
     /**
      * create instance
      *
-     * @param ClaimRepository $repo          repository
      * @param ConfigManager   $configManager config manager
-     * @param Member          $member        member
      */
-    public function __construct(ClaimRepository $repo, ConfigManager $configManager, Member $member)
+    public function __construct(ConfigManager $configManager)
     {
-        $this->repo = $repo;
         $this->configManager = $configManager;
-        $this->member = $member;
     }
 
     /**
@@ -89,33 +76,30 @@ class Handler
      */
     public function count($targetId)
     {
-        return $this->repo->count($this->claimType, $targetId);
+        return ClaimLog::where('targetId', $targetId)->where('claimType', $this->claimType)->count();
     }
 
     /**
      * 신고 추가
      *
      * @param string        $targetId targetId
-     * @param MemberEntityInterface $author   user instance
+     * @param UserInterface $author   user instance
      * @param string        $shortCut 바로가기
      * @return void
      */
-    public function add($targetId, MemberEntityInterface $author, $shortCut)
+    public function add($targetId, UserInterface $author, $shortCut)
     {
-        $args =[
+        if ($this->invoked($targetId, $author) === true) {
+            throw new Exceptions\InvokedException;
+        }
+
+        ClaimLog::create([
             'claimType' => $this->claimType,
             'shortCut' => $shortCut,
             'targetId' => $targetId,
             'userId' => $author->getId(),
-            'createdAt' => date('Y-m-d H:i:s'),
             'ipaddress' => $_SERVER['REMOTE_ADDR'],
-        ];
-
-
-        if ($this->invoked($targetId, $author) === true) {
-            throw new Exceptions\InvokedException;
-        }
-        $this->repo->insert($args);
+        ]);
     }
 
     /**
@@ -126,32 +110,33 @@ class Handler
      */
     public function remove($id)
     {
-        $this->repo->delete($id);
+        ClaimLog::find($id)->delete();
     }
 
     /**
      * 신고 삭제
      *
      * @param string        $targetId targetId
-     * @param MemberEntityInterface $author   user instance
+     * @param UserInterface $author   user instance
      * @return void
      */
-    public function removeByTargetId($targetId, MemberEntityInterface $author)
+    public function removeByTargetId($targetId, UserInterface $author)
     {
-        $this->repo->deleteByUserId($author->getId(), $this->claimType, $targetId);
+        ClaimLog::where('userId', $author->getId())->where('targetId', $targetId)
+            ->where('claimType', $this->claimType)->delete();
     }
 
     /**
      * 신고 여부
      *
      * @param string        $targetId targetId
-     * @param MemberEntityInterface $author   user instance
+     * @param UserInterface $author   user instance
      * @return bool
      */
-    public function invoked($targetId, MemberEntityInterface $author)
+    public function invoked($targetId, UserInterface $author)
     {
-
-        return $this->repo->fetchByUserId($author->getId(), $this->claimType, $targetId) !== null;
+        return ClaimLog::where('userId', $author->getId())->where('targetId', $targetId)
+            ->where('claimType', $this->claimType)->first() !== null;
     }
 
     /**
@@ -167,23 +152,23 @@ class Handler
     {
         $paginate = $this->repo->paginate($wheres, $orders, $perPage);
 
-        $userIds = [];
-        foreach ($paginate as $item) {
-            if (in_array($item['userId'], $userIds) === false) {
-                $userIds[] = $item['userId'];
-            }
-        }
-
-        $users = $this->member->findAll($userIds);
-        $usersByUserId = [];
-        foreach ($users as $user) {
-            $usersByUserId[$user->id] = $user;
-        }
-
-        foreach ($paginate as $key => $item) {
-            $item['user'] = $usersByUserId[$item['userId']];
-            $paginate[$key] = $item;
-        }
+//        $userIds = [];
+//        foreach ($paginate as $item) {
+//            if (in_array($item['userId'], $userIds) === false) {
+//                $userIds[] = $item['userId'];
+//            }
+//        }
+//
+//        $users = User::find($userIds);
+//        $usersByUserId = [];
+//        foreach ($users as $user) {
+//            $usersByUserId[$user->id] = $user;
+//        }
+//
+//        foreach ($paginate as $key => $item) {
+//            $item['user'] = $usersByUserId[$item['userId']];
+//            $paginate[$key] = $item;
+//        }
 
         return $paginate;
     }

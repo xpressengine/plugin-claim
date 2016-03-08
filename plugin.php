@@ -73,8 +73,7 @@ class Plugin extends AbstractPlugin
         $app = app();
         $app['xe.claim.handler'] = $app->share(
             function ($app) {
-                $repository = new ClaimRepository(XeDB::connection());
-                $handler = new Handler($repository, app('xe.config'), app('xe.members'));
+                $handler = new Handler(app('xe.config'));
                 return $handler;
             }
         );
@@ -92,15 +91,22 @@ class Plugin extends AbstractPlugin
 
     public function install()
     {
-        if (Schema::hasTable('claim_log') === false) {
-            Schema::create('claim_log', function (Blueprint $table) {
+        $this->createClaimLogTable();
+    }
+
+    public function createClaimLogTable()
+    {
+        if (Schema::hasTable('claim_logs') === false) {
+            Schema::create('claim_logs', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('claimType', 36);
                 $table->string('shortCut', 255);
                 $table->string('targetId', 36);
                 $table->string('userId', 36);
                 $table->string('ipaddress', 16);
+                $table->string('message', 255);
                 $table->timestamp('createdAt');
+                $table->timestamp('updatedAt');
 
                 $table->index(['targetId', 'userId']);
                 $table->index(['targetId', 'ClaimType']);
@@ -138,7 +144,7 @@ class Plugin extends AbstractPlugin
                 'config/update',
                 ['as' => 'manage.claim.claim.config.update', 'uses' => 'ManagerController@configUpdate']
             );
-        }, ['namespace' => 'Xpressengine\Plugins\Claim']);
+        }, ['namespace' => 'Xpressengine\Plugins\Claim\Controllers']);
     }
 
     /**
@@ -152,7 +158,7 @@ class Plugin extends AbstractPlugin
             Route::get('', ['as' => 'fixed.claim.index', 'uses' => 'UserController@index']);
             Route::post('store', ['as' => 'fixed.claim.store', 'uses' => 'UserController@store']);
             Route::post('destroy', ['as' => 'fixed.claim.destroy', 'uses' => 'UserController@destroy']);
-        }, ['namespace' => 'Xpressengine\Plugins\Claim']);
+        }, ['namespace' => 'Xpressengine\Plugins\Claim\Controllers']);
     }
 
     /**

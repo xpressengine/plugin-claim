@@ -11,12 +11,13 @@
  * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
  * @link        http://www.xpressengine.com
  */
-namespace Xpressengine\Plugins\Claim;
+namespace Xpressengine\Plugins\Claim\Controllers;
 
 use Input;
 use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
+use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedHttpException;
 
 /**
  * Claim user controller
@@ -69,7 +70,6 @@ class UserController extends Controller
      * store
      *
      * @return \Xpressengine\Presenter\RendererInterface
-     * @throws Exceptions\InvokedException
      */
     public function store()
     {
@@ -79,7 +79,11 @@ class UserController extends Controller
 
         $this->handler->set($from);
 
-        $this->handler->add($targetId, Auth::user(), $shortCut);
+        try {
+            $this->handler->add($targetId, Auth::user(), $shortCut);
+        } catch (\Exception $e) {
+            throw new AlreadyClaimedHttpException;
+        }
         return $this->index();
     }
 

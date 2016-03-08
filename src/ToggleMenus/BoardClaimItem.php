@@ -28,22 +28,6 @@ use Auth;
  */
 class BoardClaimItem extends AbstractToggleMenu
 {
-
-    /**
-     * @var string
-     */
-    public static $id = 'module/board@board/toggleMenu/claim@boardClaimItem';
-
-    /**
-     * get id
-     *
-     * @return string
-     */
-    public static function getId()
-    {
-        return self::$id;
-    }
-
     /**
      * get name
      *

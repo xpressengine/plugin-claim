@@ -11,7 +11,7 @@
  * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
  * @link        http://www.xpressengine.com
  */
-namespace Xpressengine\Plugins\Claim;
+namespace Xpressengine\Plugins\Claim\Controllers;
 
 use App\Sections\CommentSection;
 use App\Sections\DynamicFieldSection;
@@ -27,6 +27,7 @@ use Cfg;
 use DynamicField;
 use Validator;
 use App\Http\Controllers\Controller;
+use Xpressengine\Plugins\Claim\Models\ClaimLog;
 
 /**
  * Claim manager controller
@@ -65,7 +66,7 @@ class ManagerController extends Controller
         $wheres = [];
         $orders = [];
 
-        $paginate = app('xe.claim.handler')->paginate($wheres, $orders);
+        $paginate = ClaimLog::paginate(20);
 
         return XePresenter::make('index', [
             'action' => 'index',

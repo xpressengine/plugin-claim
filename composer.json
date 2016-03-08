@@ -24,6 +24,16 @@
           "class": "Xpressengine\\Plugins\\Claim\\Skin\\SettingsSkin",
           "name": "신고하기 관리자 기본 스킨",
           "description": "기본스킨."
+        },
+        "module/board@board/toggleMenu/claim@boardClaimItem": {
+          "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\BoardClaimItem",
+          "name": "게시판 신고 토글 메뉴",
+          "description": ""
+        },
+        "module/comment@comment/toggleMenu/claim@commentClaimItem": {
+          "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\CommentClaimItem",
+          "name": "댓글 신고 토글 메뉴",
+          "description": ""
         }
       }
     }
