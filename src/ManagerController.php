@@ -18,9 +18,8 @@ use App\Sections\DynamicFieldSection;
 use Input;
 use View;
 use Redirect;
-//use Xpressengine\Keygen\Keygen;
 use Exception;
-use Presenter;
+use XePresenter;
 use App;
 use XeDB;
 use Xpressengine\Config\ConfigEntity;
@@ -52,7 +51,7 @@ class ManagerController extends Controller
      */
     public function __construct()
     {
-        Presenter::setSettingsSkin('claim');
+        XePresenter::setSettingsSkin('claim');
     }
 
 
@@ -68,7 +67,7 @@ class ManagerController extends Controller
 
         $paginate = app('xe.claim.handler')->paginate($wheres, $orders);
 
-        return Presenter::make('index', [
+        return XePresenter::make('index', [
             'action' => 'index',
             'paginate' => $paginate,
         ]);
@@ -85,6 +84,6 @@ class ManagerController extends Controller
 
         $this->handler->remove($id);
 
-        return Presenter::makeApi([]);
+        return XePresenter::makeApi([]);
     }
 }

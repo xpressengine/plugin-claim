@@ -14,7 +14,7 @@
 namespace Xpressengine\Plugins\Claim;
 
 use Input;
-use Presenter;
+use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
 
@@ -59,7 +59,7 @@ class UserController extends Controller
         $invoked = $this->handler->invoked($targetId, Auth::user());
         $count = $this->handler->count($targetId);
 
-        return Presenter::makeApi([
+        return XePresenter::makeApi([
             'invoked' => $invoked,
             'count' => $count,
         ]);
