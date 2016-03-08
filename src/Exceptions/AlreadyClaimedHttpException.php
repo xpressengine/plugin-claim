@@ -30,4 +30,5 @@ use Symfony\Component\HttpFoundation\Response;
 class AlreadyClaimedHttpException extends HttpBoardException
 {
     protected $message = 'claim::AlreadyClaimed';
+    protected $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
 }

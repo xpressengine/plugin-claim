@@ -92,6 +92,7 @@ class Plugin extends AbstractPlugin
     public function install()
     {
         $this->createClaimLogTable();
+        $this->putLang();
     }
 
     public function createClaimLogTable()
@@ -112,6 +113,11 @@ class Plugin extends AbstractPlugin
                 $table->index(['targetId', 'ClaimType']);
             });
         }
+    }
+
+    protected function putLang()
+    {
+        app('xe.translator')->putFromLangDataSource('claim', base_path('plugins/claim/langs/lang.php'));
     }
 
     /**
