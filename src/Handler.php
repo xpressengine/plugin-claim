@@ -138,38 +138,4 @@ class Handler
         return ClaimLog::where('userId', $author->getId())->where('targetId', $targetId)
             ->where('claimType', $this->claimType)->first() !== null;
     }
-
-    /**
-     * get paginate
-     * 회원정보를 추가해서 반환
-     *
-     * @param array $wheres  make where query list
-     * @param array $orders  make order query list
-     * @param int   $perPage count of per page
-     * @return \Illuminate\Pagination\LengthAwarePaginator
-     */
-    public function paginate(array $wheres = [], array $orders = [], $perPage = 20)
-    {
-        $paginate = $this->repo->paginate($wheres, $orders, $perPage);
-
-//        $userIds = [];
-//        foreach ($paginate as $item) {
-//            if (in_array($item['userId'], $userIds) === false) {
-//                $userIds[] = $item['userId'];
-//            }
-//        }
-//
-//        $users = User::find($userIds);
-//        $usersByUserId = [];
-//        foreach ($users as $user) {
-//            $usersByUserId[$user->id] = $user;
-//        }
-//
-//        foreach ($paginate as $key => $item) {
-//            $item['user'] = $usersByUserId[$item['userId']];
-//            $paginate[$key] = $item;
-//        }
-
-        return $paginate;
-    }
 }
