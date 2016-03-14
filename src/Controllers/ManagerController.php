@@ -52,7 +52,7 @@ class ManagerController extends Controller
      */
     public function __construct()
     {
-        XePresenter::setSettingsModule('claim');
+        XePresenter::setSettingsSkinTargetId('claim');
     }
 
 
