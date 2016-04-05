@@ -78,7 +78,7 @@
                     {{--var responseText = $.parseJSON(response.responseText);--}}
                     {{--var type = 'danger';--}}
                     {{--var errorMessage = responseText.message;--}}
-                    {{--alertBox(type, errorMessage);--}}
+                    {{--XE.toast(type, errorMessage);--}}
                     {{--self.openStep('close');--}}
                 {{--}--}}
             {{--});--}}
