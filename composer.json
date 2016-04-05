@@ -19,6 +19,7 @@
   "extra": {
     "xpressengine": {
       "title": "신고",
+      "icon": "icon.png",
       "component": {
         "claim/settingsSkin/claim@default": {
           "class": "Xpressengine\\Plugins\\Claim\\Skin\\SettingsSkin",
