@@ -13,16 +13,12 @@
  */
 namespace Xpressengine\Plugins\Claim\Controllers;
 
-use App\Sections\CommentSection;
-use App\Sections\DynamicFieldSection;
 use Input;
 use View;
 use Redirect;
-use Exception;
 use XePresenter;
 use App;
 use XeDB;
-use Xpressengine\Config\ConfigEntity;
 use Cfg;
 use DynamicField;
 use Validator;
