@@ -2,15 +2,15 @@
 /**
  * CommentClaimItem
  *
- * PHP version 5
- *
  * @category    Claim
  * @package     Claim
- * @author      XE Team (akasima) <osh@xpressengine.com>
- * @copyright   2014 Copyright (C) NAVER <http://www.navercorp.com>
- * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
- * @link        http://www.xpressengine.com
+ * @author      XE Developers <developers@xpressengine.com>
+ * @copyright   2015 Copyright (C) NAVER Corp. <http://www.navercorp.com>
+ * @license     LGPL-2.1
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ * @link        https://xpressengine.io
  */
+
 namespace Xpressengine\Plugins\Claim\ToggleMenus;
 
 use Xpressengine\ToggleMenu\AbstractToggleMenu;
@@ -21,10 +21,6 @@ use Auth;
  *
  * @category    Claim
  * @package     Claim
- * @author      XE Team (akasima) <osh@xpressengine.com>
- * @copyright   2014 Copyright (C) NAVER <http://www.navercorp.com>
- * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
- * @link        http://www.xpressengine.com
  */
 class CommentClaimItem extends BoardClaimItem
 {
