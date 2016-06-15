@@ -93,6 +93,8 @@ class BoardClaimItem extends AbstractToggleMenu
 
         if ($count > 0) {
             $text = sprintf('%s (%s)', xe_trans($text), $count);
+        } else {
+            $text = xe_trans($text);
         }
         return $text;
     }
