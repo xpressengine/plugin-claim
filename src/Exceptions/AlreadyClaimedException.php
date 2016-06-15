@@ -1,6 +1,6 @@
 <?php
 /**
- * Exceptions
+ * AlreadyClaimedException
  *
  * PHP version 5
  *
@@ -16,7 +16,7 @@ namespace Xpressengine\Plugins\Claim\Exceptions;
 use Xpressengine\Plugins\Claim\ClaimException;
 
 /**
- * Repository Exception
+ * AlreadyClaimedException
  *
  * @category    Claim
  * @package     Claim
@@ -25,6 +25,6 @@ use Xpressengine\Plugins\Claim\ClaimException;
  * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
  * @link        http://www.xpressengine.com
  */
-class InvokedException extends ClaimException
+class AlreadyClaimedException extends ClaimException
 {
 }

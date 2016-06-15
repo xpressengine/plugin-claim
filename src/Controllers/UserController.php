@@ -18,6 +18,7 @@ use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
 use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedHttpException;
+use Xpressengine\Plugins\Claim\Handler;
 
 /**
  * Claim user controller
@@ -57,7 +58,7 @@ class UserController extends Controller
 
         $this->handler->set($from);
 
-        $invoked = $this->handler->invoked($targetId, Auth::user());
+        $invoked = $this->handler->has($targetId, Auth::user());
         $count = $this->handler->count($targetId);
 
         return XePresenter::makeApi([

@@ -14,10 +14,11 @@
 namespace Xpressengine\Plugins\Claim\ToggleMenus;
 
 use Xpressengine\ToggleMenu\AbstractToggleMenu;
+use Xpressengine\Plugins\Claim\Handler;
 use Auth;
 
 /**
- * Claim board toggle menu
+ * BoardClaimItem
  *
  * @category    Claim
  * @package     Claim
@@ -35,7 +36,7 @@ class BoardClaimItem extends AbstractToggleMenu
      */
     public static function getName()
     {
-        return '신고';
+        return '게시물 신고';
     }
 
     /**
@@ -78,19 +79,20 @@ class BoardClaimItem extends AbstractToggleMenu
      */
     public function getText()
     {
+        /** @var Handler $handler */
         $handler = app('xe.claim.handler');
 
         $handler->set($this->type);
         $count = $handler->count($this->target);
-        $invoked = $handler->invoked($this->target, Auth::user());
+        $invoked = $handler->has($this->target, Auth::user());
 
-        $text = '신고';
+        $text = 'xe::claim';
         if ($invoked === true) {
-            $text = '신고 취소';
+            $text = 'xe::cancelClaim';
         }
 
         if ($count > 0) {
-            $text = sprintf('%s (%s)', $text, $count);
+            $text = sprintf('%s (%s)', xe_trans($text), $count);
         }
         return $text;
     }
@@ -112,25 +114,26 @@ class BoardClaimItem extends AbstractToggleMenu
      */
     public function getAction()
     {
+        /** @var Handler $handler */
         $handler = app('xe.claim.handler');
 
         $handler->set($this->type);
-        $invoked = $handler->invoked($this->target, Auth::user());
 
-        $action = sprintf(
-            'ClaimToggleMenu.storeBoard(e, "%s", "%s", "%s", "%s")',
-            route('fixed.claim.store'),
-            $this->type,
-            $this->target,
-            $_SERVER['HTTP_REFERER']
-        );
-
-        if ($invoked === true) {
+        $action = '';
+        if ($handler->has($this->target, Auth::user()) === true) {
             $action = sprintf(
-                'ClaimToggleMenu.storeBoard(e, "%s", "%s", "%s")',
+                'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),
                 $this->type,
                 $this->target
+            );
+        } else {
+            $action = sprintf(
+                'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s", "%s")',
+                route('fixed.claim.store'),
+                $this->type,
+                $this->target,
+                $_SERVER['HTTP_REFERER']
             );
         }
 

@@ -1,6 +1,7 @@
 var ClaimToggleMenu = {
-    storeBoard: function(o, url, from, targetId, shortCut) {
-        var _o = $(o.target)[0];
+    storeBoard: function(e, url, from, targetId, shortCut) {
+        e.preventDefault();
+        var _o = $(e.target)[0];
 
         $.ajax({
             url: url,
@@ -8,12 +9,14 @@ var ClaimToggleMenu = {
             dataType: 'json',
             data: {from: from, targetId:targetId, shortCut:shortCut},
             success: function (json) {
+                $('body').trigger('click');
                 XE.toast('info', '신고되었습니다');
             }
         });
     },
-    destroyBoard: function(o, url, from, targetId) {
-        var _o = $(o.target)[0];
+    destroyBoard: function(e, url, from, targetId) {
+        e.preventDefault();
+        var _o = $(e.target)[0];
 
         $.ajax({
             url: url,
@@ -21,6 +24,7 @@ var ClaimToggleMenu = {
             dataType: 'json',
             data: {from: from, targetId:targetId},
             success: function (json) {
+                $('body').trigger('click');
                 XE.toast('info', '신고를 취소했습니다.');
             }
         });

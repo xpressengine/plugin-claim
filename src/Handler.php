@@ -89,8 +89,8 @@ class Handler
      */
     public function add($targetId, UserInterface $author, $shortCut)
     {
-        if ($this->invoked($targetId, $author) === true) {
-            throw new Exceptions\InvokedException;
+        if ($this->has($targetId, $author) === true) {
+            throw new Exceptions\AlreadyClaimedException;
         }
 
         ClaimLog::create([
@@ -133,7 +133,7 @@ class Handler
      * @param UserInterface $author   user instance
      * @return bool
      */
-    public function invoked($targetId, UserInterface $author)
+    public function has($targetId, UserInterface $author)
     {
         return ClaimLog::where('userId', $author->getId())->where('targetId', $targetId)
             ->where('claimType', $this->claimType)->first() !== null;
