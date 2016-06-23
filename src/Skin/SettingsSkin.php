@@ -39,7 +39,6 @@ class SettingsSkin extends AbstractSkin
     {
         $view = View::make('claim::views.settingsSkin._frame', $this->data);
         $content = View::make(sprintf('claim::views.settingsSkin.%s', $this->view), $this->data);
-        $content->tabMenu = View::make('claim::views.settingsSkin._tabMenu', $this->data)->render();
         $view->content = $content->render();
 
         return $view;

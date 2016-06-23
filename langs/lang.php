@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'claimManage' => [
+        'ko' => '신고 관리',
+        'en' => 'Claim manage',
+    ],
     'AlreadyClaimed' => [
         'ko' => '이미 신고되었습니다.',
         'en' => 'Already Claimed.',

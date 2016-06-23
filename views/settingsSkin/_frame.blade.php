@@ -1,9 +1,5 @@
 @section('page_title')
-    <h2>신고관리</h2>
-@stop
-
-@section('page_description')
-    신고를 관리하는 페이지 입니다.
+    <h2>{{xe_trans('claim::claimManage')}}</h2>
 @stop
 
 {{-- include contents blade file --}}

@@ -173,7 +173,7 @@ class Plugin extends AbstractPlugin
         // settings menu 등록
         $menus = [
             'contents.claim' => [
-                'title' => '신고 관리',
+                'title' => 'xe::claim',
                 'display' => true,
                 'description' => 'blur blur~',
                 'link' => route('manage.claim.claim.index'),
