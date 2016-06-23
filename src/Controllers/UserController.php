@@ -19,6 +19,7 @@ use Auth;
 use App\Http\Controllers\Controller;
 use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedHttpException;
 use Xpressengine\Plugins\Claim\Handler;
+use Xpressengine\Support\Exceptions\LoginRequiredHttpException;
 
 /**
  * Claim user controller
@@ -70,6 +71,10 @@ class UserController extends Controller
      */
     public function store()
     {
+        if (Auth::check() === false) {
+            throw new LoginRequiredHttpException;
+        }
+
         $targetId = Input::get('targetId');
         $shortCut = Input::get('shortCut');
         $from = Input::get('from');

@@ -10,7 +10,7 @@ var ClaimToggleMenu = {
             data: {from: from, targetId:targetId, shortCut:shortCut},
             success: function (json) {
                 $('body').trigger('click');
-                XE.toast('info', '신고되었습니다');
+                XE.toast('xe-success', XE.Lang.trans('claim::msgClaimReceived'));
             }
         });
     },
@@ -25,7 +25,7 @@ var ClaimToggleMenu = {
             data: {from: from, targetId:targetId},
             success: function (json) {
                 $('body').trigger('click');
-                XE.toast('info', '신고를 취소했습니다.');
+                XE.toast('xe-success', XE.Lang.trans('claim::msgClaimCanceled'));
             }
         });
     }
