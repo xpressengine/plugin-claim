@@ -2,7 +2,7 @@
   "name": "xpressengine-plugin/claim",
   "description": "XpressEngine's plugin for bundle (XE)",
   "keywords": ["xpressengine bundle", "XE claim"],
-  "version": "0.3.0",
+  "version": "0.9.0",
   "support": {
     "email": "developers@xpressengine.com"
   },

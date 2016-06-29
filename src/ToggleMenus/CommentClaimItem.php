@@ -24,22 +24,4 @@ use Auth;
  */
 class CommentClaimItem extends BoardClaimItem
 {
-    /**
-     * get name
-     * @return string
-     */
-    public static function getName()
-    {
-        return '댓글 신고';
-    }
-
-    /**
-     * get description
-     *
-     * @return string
-     */
-    public static function getDescription()
-    {
-        return '선택한 문서를 신고합니다.';
-    }
 }

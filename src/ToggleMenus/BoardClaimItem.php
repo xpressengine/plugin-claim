@@ -16,6 +16,7 @@ namespace Xpressengine\Plugins\Claim\ToggleMenus;
 use Xpressengine\ToggleMenu\AbstractToggleMenu;
 use Xpressengine\Plugins\Claim\Handler;
 use Auth;
+use XeFrontend;
 
 /**
  * BoardClaimItem
@@ -25,27 +26,6 @@ use Auth;
  */
 class BoardClaimItem extends AbstractToggleMenu
 {
-    /**
-     * get name
-     *
-     * @return string
-     */
-    public static function getName()
-    {
-        return '게시물 신고';
-    }
-
-    /**
-     * get description
-     *
-     * @return string
-     */
-    public static function getDescription()
-    {
-        return '선택한 문서를 신고합니다.';
-    }
-
-
     /**
      * @var string
      */
@@ -135,6 +115,10 @@ class BoardClaimItem extends AbstractToggleMenu
             );
         }
 
+        XeFrontend::translation([
+            'claim::msgClaimReceived',
+            'claim::msgClaimCanceled',
+        ]);
         return $action;
     }
 
@@ -145,6 +129,7 @@ class BoardClaimItem extends AbstractToggleMenu
      */
     public function getScript()
     {
+
         $path = '/plugins/claim/assets/menu.js';
 
         return asset(str_replace(base_path(), '', $path));
