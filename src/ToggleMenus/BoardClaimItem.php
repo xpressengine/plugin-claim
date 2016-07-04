@@ -27,28 +27,6 @@ use XeFrontend;
 class BoardClaimItem extends AbstractToggleMenu
 {
     /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var string
-     */
-    protected $target;
-
-    /**
-     * create instance
-     *
-     * @param string $type   type
-     * @param string $target target
-     */
-    public function __construct($type, $target)
-    {
-        $this->type = $type;
-        $this->target = $target;
-    }
-
-    /**
      * get text
      *
      * @return string
