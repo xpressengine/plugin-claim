@@ -36,9 +36,9 @@ class BoardClaimItem extends AbstractToggleMenu
         /** @var Handler $handler */
         $handler = app('xe.claim.handler');
 
-        $handler->set($this->type);
-        $count = $handler->count($this->target);
-        $invoked = $handler->has($this->target, Auth::user());
+        $handler->set($this->componentType);
+        $count = $handler->count($this->identifier);
+        $invoked = $handler->has($this->identifier, Auth::user());
 
         $text = 'xe::claim';
         if ($invoked === true) {
@@ -60,7 +60,7 @@ class BoardClaimItem extends AbstractToggleMenu
      */
     public function getType()
     {
-        return 'exec';
+        return static::MENUTYPE_EXEC;
     }
 
     /**
@@ -73,22 +73,22 @@ class BoardClaimItem extends AbstractToggleMenu
         /** @var Handler $handler */
         $handler = app('xe.claim.handler');
 
-        $handler->set($this->type);
+        $handler->set($this->componentType);
 
         $action = '';
-        if ($handler->has($this->target, Auth::user()) === true) {
+        if ($handler->has($this->identifier, Auth::user()) === true) {
             $action = sprintf(
                 'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),
-                $this->type,
-                $this->target
+                $this->componentType,
+                $this->identifier
             );
         } else {
             $action = sprintf(
                 'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s", "%s")',
                 route('fixed.claim.store'),
-                $this->type,
-                $this->target,
+                $this->componentType,
+                $this->identifier,
                 $_SERVER['HTTP_REFERER']
             );
         }
@@ -111,15 +111,5 @@ class BoardClaimItem extends AbstractToggleMenu
         $path = '/plugins/claim/assets/menu.js';
 
         return asset(str_replace(base_path(), '', $path));
-    }
-
-    /**
-     * get icon
-     *
-     * @return string
-     */
-    public function getIcon()
-    {
-        return null;
     }
 }
