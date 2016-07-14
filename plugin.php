@@ -85,6 +85,7 @@ class Plugin extends AbstractPlugin
 
     public function update($installedVersion = null)
     {
+        $this->putLang();
         $this->setToggleMenuConfig();
     }
 
