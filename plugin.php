@@ -18,6 +18,7 @@ use Route;
 use Schema;
 use Illuminate\Database\Schema\Blueprint;
 use XeDB;
+use XeToggleMenu;
 
 /**
  * Claim plugin
@@ -27,33 +28,6 @@ use XeDB;
  */
 class Plugin extends AbstractPlugin
 {
-    /**
-     * @return boolean
-     */
-    public function unInstall()
-    {
-        // TODO: Implement unInstall() method.
-    }
-
-    /**
-     * @param null $installedVersion install version
-     * @return bool
-     */
-    public function checkInstalled($installedVersion = null)
-    {
-        if ($installedVersion === null) {
-            return false;
-        }
-    }
-
-    /**
-     * @return boolean
-     */
-    public function checkUpdated($installedVersion = NULL)
-    {
-        // TODO: Implement checkUpdate() method.
-    }
-
     /**
      * boot
      *
@@ -85,10 +59,66 @@ class Plugin extends AbstractPlugin
     {
     }
 
+    /**
+     * @return boolean
+     */
+    public function checkUpdated($installedVersion = NULL)
+    {
+        if (version_compare($installedVersion, '0.9.1', '<=')) {
+            $toggleMenuId = 'module/board@board';
+            $activated = XeToggleMenu::getActivated($toggleMenuId);
+            $itemId = 'module/board@board/toggleMenu/claim@boardClaimItem';
+            if (isset($activated[$itemId]) === false) {
+                return false;
+            }
+
+            $toggleMenuId = 'comment';
+            $activated = XeToggleMenu::getActivated($toggleMenuId);
+            $itemId = 'comment/toggleMenu/claim@commentClaimItem';
+            if (isset($activated[$itemId]) === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function update($installedVersion = null)
+    {
+        $this->setToggleMenuConfig();
+    }
+
     public function install()
     {
         $this->createClaimLogTable();
         $this->putLang();
+        $this->setToggleMenuConfig();
+    }
+
+    /**
+     * set toggle menu item to board, comment
+     *
+     * @return void
+     */
+    protected function setToggleMenuConfig()
+    {
+        $toggleMenuId = 'module/board@board';
+        $activated = XeToggleMenu::getActivated($toggleMenuId);
+        $itemId = 'module/board@board/toggleMenu/claim@boardClaimItem';
+        if (isset($activated[$itemId]) === false) {
+            $setActivate = array_keys($activated);
+            $setActivate[] = $itemId;
+            XeToggleMenu::setActivates($toggleMenuId, null, $setActivate);
+        }
+
+        $toggleMenuId = 'comment';
+        $activated = XeToggleMenu::getActivated($toggleMenuId);
+        $itemId = 'comment/toggleMenu/claim@commentClaimItem';
+        if (isset($activated[$itemId]) === false) {
+            $setActivate = array_keys($activated);
+            $setActivate[] = $itemId;
+            XeToggleMenu::setActivates($toggleMenuId, null, $setActivate);
+        }
     }
 
     public function createClaimLogTable()
