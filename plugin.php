@@ -213,7 +213,6 @@ class Plugin extends AbstractPlugin
                 'title' => 'xe::claim',
                 'display' => true,
                 'description' => 'blur blur~',
-                'link' => route('manage.claim.claim.index'),
                 'ordering' => 5000
             ],
         ];
