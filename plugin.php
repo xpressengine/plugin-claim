@@ -13,12 +13,11 @@
 
 namespace Xpressengine\Plugins\Claim;
 
-use Xpressengine\Plugin\AbstractPlugin;
+use Illuminate\Database\Schema\Blueprint;
 use Route;
 use Schema;
-use Illuminate\Database\Schema\Blueprint;
-use XeDB;
 use XeToggleMenu;
+use Xpressengine\Plugin\AbstractPlugin;
 
 /**
  * Claim plugin
@@ -166,7 +165,14 @@ class Plugin extends AbstractPlugin
     protected function registerManageRoute()
     {
         Route::settings(self::getId(), function () {
-            Route::get('/', ['as' => 'manage.claim.claim.index', 'uses' => 'ManagerController@index']);
+            Route::get(
+                '/',
+                [
+                    'as' => 'manage.claim.claim.index',
+                    'uses' => 'ManagerController@index',
+                    'settings_menu' => 'contents.claim'
+                ]
+            );
             Route::get('delete', ['as' => 'manage.claim.claim.delete', 'uses' => 'ManagerController@delete']);
             Route::get('config', ['as' => 'manage.claim.claim.config', 'uses' => 'ManagerController@config']);
             Route::get(
