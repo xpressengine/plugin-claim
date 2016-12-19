@@ -173,7 +173,7 @@ class Plugin extends AbstractPlugin
                     'settings_menu' => 'contents.claim'
                 ]
             );
-            Route::get('delete', ['as' => 'manage.claim.claim.delete', 'uses' => 'ManagerController@delete']);
+            Route::post('delete', ['as' => 'manage.claim.claim.delete', 'uses' => 'ManagerController@delete']);
             Route::get('config', ['as' => 'manage.claim.claim.config', 'uses' => 'ManagerController@config']);
             Route::get(
                 'config/edit',
