@@ -25,7 +25,7 @@ var ClaimToggleMenu = {
             data: {from: from, targetId:targetId},
             success: function (json) {
                 $('body').trigger('click');
-                XE.toast('success', XE.Lang.trans('claim::msgClaimCanceled'));
+                XE.toast('warning', XE.Lang.trans('claim::msgClaimCanceled'));
             }
         });
     }
