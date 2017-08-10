@@ -78,7 +78,7 @@ class BoardClaimItem extends AbstractToggleMenu
         $action = '';
         if ($handler->has($this->identifier, Auth::user()) === true) {
             $action = sprintf(
-                'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s")',
+                'ClaimToggleMenu.destroyBoard(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),
                 $this->componentType,
                 $this->identifier
