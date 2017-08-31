@@ -72,7 +72,7 @@ class Handler
      */
     public function count($targetId)
     {
-        return ClaimLog::where('targetId', $targetId)->where('claimType', $this->claimType)->count();
+        return ClaimLog::where('target_id', $targetId)->where('claim_type', $this->claimType)->count();
     }
 
     /**
@@ -90,10 +90,10 @@ class Handler
         }
 
         ClaimLog::create([
-            'claimType' => $this->claimType,
-            'shortCut' => $shortCut,
-            'targetId' => $targetId,
-            'userId' => $author->getId(),
+            'claim_type' => $this->claimType,
+            'short_cut' => $shortCut,
+            'target_id' => $targetId,
+            'user_id' => $author->getId(),
             'ipaddress' => $_SERVER['REMOTE_ADDR'],
         ]);
     }
@@ -118,8 +118,8 @@ class Handler
      */
     public function removeByTargetId($targetId, UserInterface $author)
     {
-        ClaimLog::where('userId', $author->getId())->where('targetId', $targetId)
-            ->where('claimType', $this->claimType)->delete();
+        ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
+            ->where('claim_type', $this->claimType)->delete();
     }
 
     /**
@@ -131,7 +131,7 @@ class Handler
      */
     public function has($targetId, UserInterface $author)
     {
-        return ClaimLog::where('userId', $author->getId())->where('targetId', $targetId)
-            ->where('claimType', $this->claimType)->first() !== null;
+        return ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
+            ->where('claim_type', $this->claimType)->first() !== null;
     }
 }
