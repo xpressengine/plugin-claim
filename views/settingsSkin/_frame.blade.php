@@ -3,4 +3,6 @@
 @stop
 
 {{-- include contents blade file --}}
-@yield('content', isset($content) ? $content : '')
+@section('content')
+    {!! isset($content) ? $content : '' !!}
+@show

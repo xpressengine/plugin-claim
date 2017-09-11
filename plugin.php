@@ -39,13 +39,9 @@ class Plugin extends AbstractPlugin
         $this->registerFixedRoute();
         $this->registerSettingsMenu();
 
-        $app = app();
-        $app['xe.claim.handler'] = $app->share(
-            function ($app) {
-                $handler = new Handler(app('xe.config'));
-                return $handler;
-            }
-        );
+        app()->singleton('xe.claim.handler', function () {
+            return new Handler(app('xe.config'));
+        });
     }
 
     /**
