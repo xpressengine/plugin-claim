@@ -20,6 +20,7 @@ use Xpressengine\Document\Exceptions\DocumentNotFoundException;
 use Xpressengine\Document\Exceptions\ReplyLimitationException;
 use Xpressengine\Document\Exceptions\ValueRequiredException;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
+use Xpressengine\User\Models\User;
 
 /**
  * ClaimLog
@@ -43,6 +44,6 @@ class ClaimLog extends DynamicModel
 
     public function user()
     {
-        return $this->belongsTo('Xpressengine\User\Models\User', 'userId');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -39,13 +39,9 @@ class Plugin extends AbstractPlugin
         $this->registerFixedRoute();
         $this->registerSettingsMenu();
 
-        $app = app();
-        $app['xe.claim.handler'] = $app->share(
-            function ($app) {
-                $handler = new Handler(app('xe.config'));
-                return $handler;
-            }
-        );
+        app()->singleton('xe.claim.handler', function () {
+            return new Handler(app('xe.config'));
+        });
     }
 
     /**
@@ -126,17 +122,17 @@ class Plugin extends AbstractPlugin
         if (Schema::hasTable('claim_logs') === false) {
             Schema::create('claim_logs', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('claimType', 36);
-                $table->string('shortCut', 255);
-                $table->string('targetId', 36);
-                $table->string('userId', 36);
+                $table->string('claim_type', 36);
+                $table->string('short_cut', 255);
+                $table->string('target_id', 36);
+                $table->string('user_id', 36);
                 $table->string('ipaddress', 16);
                 $table->string('message', 255);
-                $table->timestamp('createdAt');
-                $table->timestamp('updatedAt');
+                $table->timestamp('created_at');
+                $table->timestamp('updated_at');
 
-                $table->index(['targetId', 'userId']);
-                $table->index(['targetId', 'ClaimType']);
+                $table->index(['target_id', 'user_id']);
+                $table->index(['target_id', 'claim_type']);
             });
         }
     }
