@@ -13,7 +13,7 @@
 
 namespace Xpressengine\Plugins\Claim\Controllers;
 
-use Input;
+use Request;
 use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
@@ -50,8 +50,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $targetId = Input::get('targetId');
-        $from = Input::get('from');
+        $targetId = Request::get('targetId');
+        $from = Request::get('from');
 
         $this->handler->set($from);
 
@@ -75,9 +75,9 @@ class UserController extends Controller
             throw new LoginRequiredHttpException;
         }
 
-        $targetId = Input::get('targetId');
-        $shortCut = Input::get('shortCut');
-        $from = Input::get('from');
+        $targetId = Request::get('targetId');
+        $shortCut = Request::get('shortCut');
+        $from = Request::get('from');
 
         $this->handler->set($from);
 
@@ -96,8 +96,8 @@ class UserController extends Controller
      */
     public function destroy()
     {
-        $targetId = Input::get('targetId');
-        $from = Input::get('from');
+        $targetId = Request::get('targetId');
+        $from = Request::get('from');
 
         $this->handler->set($from);
 

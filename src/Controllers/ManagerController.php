@@ -13,7 +13,7 @@
 
 namespace Xpressengine\Plugins\Claim\Controllers;
 
-use Input;
+use Request;
 use View;
 use Redirect;
 use XePresenter;
@@ -73,7 +73,7 @@ class ManagerController extends Controller
      */
     public function delete()
     {
-        $id = Input::get('id');
+        $id = Request::get('id');
 
         $this->handler->remove($id);
 
