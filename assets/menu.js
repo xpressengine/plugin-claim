@@ -3,7 +3,7 @@ var ClaimToggleMenu = {
         e.preventDefault();
         var _o = $(e.target)[0];
 
-        $.ajax({
+        XE.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
@@ -18,7 +18,7 @@ var ClaimToggleMenu = {
         e.preventDefault();
         var _o = $(e.target)[0];
 
-        $.ajax({
+        XE.ajax({
             url: url,
             type: 'post',
             dataType: 'json',
