@@ -34,7 +34,7 @@
                             @foreach($paginate as $item)
                                 <tr>
                                     <td><b>[{{ $item->user->getDisplayName() }}]</b></td>
-                                    <td>{{ $item['claim_type'] }} <a href="{{ $item['short_cut'] }}" class="btn btn-default" target="_blank"><i class="xi-external-link"></i></a></td>
+                                    <td>{{ $item['claim_type'] }} <a href="{{ $item['short_cut'] }}" target="_blank"><i class="xi-external-link"></i></a></td>
                                     <td>{{ $item['created_at'] }}</td>
                                     <td>{{ $item['ipaddress'] }}</td>
                                     {{--<td><button type="button" class="btn btn-default __xe_delete_claim" data-id="{{ $item['id'] }}">삭제</button></td>--}}
