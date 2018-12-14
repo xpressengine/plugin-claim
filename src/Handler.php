@@ -1,14 +1,17 @@
 <?php
 /**
- * Claim handler
+ * Handler.php
+ *
+ * This file is part of the Xpressengine package.
+ *
+ * PHP version 5
  *
  * @category    Claim
- * @package     Claim
+ * @package     Xpressengine\Plugins\Claim
  * @author      XE Developers <developers@xpressengine.com>
- * @copyright   2015 Copyright (C) NAVER Corp. <http://www.navercorp.com>
- * @license     LGPL-2.1
- * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * @link        https://xpressengine.io
+ * @copyright   2015 Copyright (C) NAVER <http://www.navercorp.com>
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html LGPL-2.1
+ * @link        http://www.xpressengine.com
  */
 
 namespace Xpressengine\Plugins\Claim;
@@ -19,12 +22,15 @@ use Xpressengine\Plugins\Claim\Models\ClaimLog;
 use Xpressengine\User\Models\User;
 use Xpressengine\User\UserInterface;
 
-
 /**
- * Claim handler
+ * Handler
  *
  * @category    Claim
- * @package     Claim
+ * @package     Xpressengine\Plugins\Claim
+ * @author      XE Developers <developers@xpressengine.com>
+ * @copyright   2015 Copyright (C) NAVER <http://www.navercorp.com>
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html LGPL-2.1
+ * @link        http://www.xpressengine.com
  */
 class Handler
 {
@@ -46,7 +52,7 @@ class Handler
     /**
      * create instance
      *
-     * @param ConfigManager   $configManager config manager
+     * @param ConfigManager $configManager config manager
      */
     public function __construct(ConfigManager $configManager)
     {
@@ -57,6 +63,7 @@ class Handler
      * claim 에서 사용 할 type name 설정
      *
      * @param string $claimType claim type
+     *
      * @return void
      */
     public function set($claimType)
@@ -68,6 +75,7 @@ class Handler
      * 신고 수
      *
      * @param string $targetId targetId
+     *
      * @return int
      */
     public function count($targetId)
@@ -81,6 +89,7 @@ class Handler
      * @param string        $targetId targetId
      * @param UserInterface $author   user instance
      * @param string        $shortCut 바로가기
+     *
      * @return void
      */
     public function add($targetId, UserInterface $author, $shortCut)
@@ -102,6 +111,7 @@ class Handler
      * 신고 삭제
      *
      * @param int $id id
+     *
      * @return void
      */
     public function remove($id)
@@ -114,6 +124,7 @@ class Handler
      *
      * @param string        $targetId targetId
      * @param UserInterface $author   user instance
+     *
      * @return void
      */
     public function removeByTargetId($targetId, UserInterface $author)
@@ -127,11 +138,12 @@ class Handler
      *
      * @param string        $targetId targetId
      * @param UserInterface $author   user instance
+     *
      * @return bool
      */
     public function has($targetId, UserInterface $author)
     {
         return ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
-            ->where('claim_type', $this->claimType)->first() !== null;
+                ->where('claim_type', $this->claimType)->first() !== null;
     }
 }
