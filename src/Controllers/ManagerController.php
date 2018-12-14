@@ -1,14 +1,17 @@
 <?php
 /**
- * Claim manager controller
+ * ManagerController.php
+ *
+ * This file is part of the Xpressengine package.
+ *
+ * PHP version 5
  *
  * @category    Claim
- * @package     Claim
+ * @package     Xpressengine\Plugins\Claim
  * @author      XE Developers <developers@xpressengine.com>
- * @copyright   2015 Copyright (C) NAVER Corp. <http://www.navercorp.com>
- * @license     LGPL-2.1
- * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * @link        https://xpressengine.io
+ * @copyright   2015 Copyright (C) NAVER <http://www.navercorp.com>
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html LGPL-2.1
+ * @link        http://www.xpressengine.com
  */
 
 namespace Xpressengine\Plugins\Claim\Controllers;
@@ -23,35 +26,38 @@ use Cfg;
 use DynamicField;
 use Validator;
 use App\Http\Controllers\Controller;
+use Xpressengine\Plugins\Claim\Handler;
 use Xpressengine\Plugins\Claim\Models\ClaimLog;
 
 /**
- * Claim manager controller
+ * ManagerController
  *
  * @category    Claim
- * @package     Claim
+ * @package     Xpressengine\Plugins\Claim
+ * @author      XE Developers <developers@xpressengine.com>
+ * @copyright   2015 Copyright (C) NAVER <http://www.navercorp.com>
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html LGPL-2.1
+ * @link        http://www.xpressengine.com
  */
 class ManagerController extends Controller
 {
-
     /**
-     * @var ClaimHandler
+     * @var Handler
      */
     protected $handler;
 
     /**
-     * create instance
+     * ManagerController constructor.
      */
     public function __construct()
     {
         XePresenter::setSettingsSkinTargetId('claim');
     }
 
-
     /**
      * index
      *
-     * @return \Xpressengine\Presenter\RendererInterface
+     * @return \Xpressengine\Presenter\Presentable
      */
     public function index()
     {
@@ -69,7 +75,7 @@ class ManagerController extends Controller
     /**
      * delete
      *
-     * @return \Xpressengine\Presenter\RendererInterface
+     * @return \Xpressengine\Presenter\Presentable
      */
     public function delete()
     {

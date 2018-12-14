@@ -1,14 +1,17 @@
 <?php
 /**
- * Claim manager skin
+ * SettingsSkin.php
+ *
+ * This file is part of the Xpressengine package.
+ *
+ * PHP version 5
  *
  * @category    Claim
- * @package     Claim
+ * @package     Xpressengine\Plugins\Claim
  * @author      XE Developers <developers@xpressengine.com>
- * @copyright   2015 Copyright (C) NAVER Corp. <http://www.navercorp.com>
- * @license     LGPL-2.1
- * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- * @link        https://xpressengine.io
+ * @copyright   2015 Copyright (C) NAVER <http://www.navercorp.com>
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html LGPL-2.1
+ * @link        http://www.xpressengine.com
  */
 
 namespace Xpressengine\Plugins\Claim\Skin;
@@ -17,14 +20,17 @@ use Xpressengine\Skin\AbstractSkin;
 use View;
 
 /**
- * Claim manager skin
+ * SettingsSkin
  *
  * @category    Claim
- * @package     Claim
+ * @package     Xpressengine\Plugins\Claim
+ * @author      XE Developers <developers@xpressengine.com>
+ * @copyright   2015 Copyright (C) NAVER <http://www.navercorp.com>
+ * @license     http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html LGPL-2.1
+ * @link        http://www.xpressengine.com
  */
 class SettingsSkin extends AbstractSkin
 {
-
     /**
      * @var string
      */
