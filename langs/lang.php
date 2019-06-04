@@ -17,4 +17,8 @@ return [
         'ko' => '신고가 취소 되었습니다.',
         'en' => 'The report has been canceled.',
     ],
+    'unknownUser' => [
+        'ko' => '알 수 없는 회원',
+        'en' => 'Unknown user'
+    ]
 ];

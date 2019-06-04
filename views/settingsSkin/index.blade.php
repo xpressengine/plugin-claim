@@ -33,7 +33,11 @@
                             <tbody>
                             @foreach($paginate as $item)
                                 <tr>
-                                    <td><b>[{{ $item->user->getDisplayName() }}]</b></td>
+                                    @if ($item->user != null)
+                                        <td><b>[{{ $item->user->getDisplayName() }}]</b></td>
+                                    @else
+                                        <td>[{{xe_trans('claim::unknownUser')}}]</td>
+                                    @endif
                                     <td>{{ $item['claim_type'] }} <a href="{{ $item['short_cut'] }}" target="_blank"><i class="xi-external-link"></i></a></td>
                                     <td>{{ $item['created_at'] }}</td>
                                     <td>{{ $item['ipaddress'] }}</td>
