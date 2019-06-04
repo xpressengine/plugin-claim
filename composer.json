@@ -1,8 +1,8 @@
 {
   "name": "xpressengine-plugin/claim",
-  "description": "XpressEngine's plugin for bundle (XE)",
+  "description": "이 플러그인은 XE3에서 신고 기능을 제공합니다.",
   "keywords": ["xpressengine bundle", "XE claim"],
-  "version": "1.0.0",
+  "version": "1.0.1",
   "support": {
     "email": "developers@xpressengine.com"
   },
@@ -10,7 +10,7 @@
     {
       "name": "XE Developers",
       "email": "developers@xpressengine.com",
-      "homepage": "http://xpressengine.io",
+      "homepage": "https://store.xehub.io/plugins/claim",
       "role": "Developer"
     }
   ],
@@ -38,6 +38,9 @@
         }
       }
     }
+  },
+  "require": {
+    "xpressengine/xpressengine": "~3.0.2",
   },
   "require-dev": {
     "phpunit/phpunit": "~4.0",
