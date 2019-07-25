@@ -2,7 +2,7 @@
   "name": "xpressengine-plugin/claim",
   "description": "이 플러그인은 XE3에서 신고 기능을 제공합니다.",
   "keywords": ["xpressengine bundle", "XE claim"],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "support": {
     "email": "developers@xpressengine.com"
   },
@@ -14,7 +14,7 @@
       "role": "Developer"
     }
   ],
-  "license": "LGPL-2.1",
+  "license": "LGPL-3.0-or-later",
   "type": "xpressengine-plugin",
   "extra": {
     "xpressengine": {
