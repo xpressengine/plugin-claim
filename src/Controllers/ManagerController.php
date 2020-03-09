@@ -64,7 +64,7 @@ class ManagerController extends Controller
         $wheres = [];
         $orders = [];
 
-        $paginate = ClaimLog::paginate(20);
+        $paginate = ClaimLog::orderBy('created_at', 'desc')->paginate(20)->appends(Request::except('page'));
 
         return XePresenter::make('index', [
             'action' => 'index',

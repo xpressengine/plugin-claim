@@ -84,30 +84,6 @@ class Handler
     }
 
     /**
-     * 신고 추가
-     *
-     * @param string        $targetId targetId
-     * @param UserInterface $author   user instance
-     * @param string        $shortCut 바로가기
-     *
-     * @return void
-     */
-    public function add($targetId, UserInterface $author, $shortCut)
-    {
-        if ($this->has($targetId, $author) === true) {
-            throw new Exceptions\AlreadyClaimedException;
-        }
-
-        ClaimLog::create([
-            'claim_type' => $this->claimType,
-            'short_cut' => $shortCut,
-            'target_id' => $targetId,
-            'user_id' => $author->getId(),
-            'ipaddress' => $_SERVER['REMOTE_ADDR'],
-        ]);
-    }
-
-    /**
      * 신고 삭제
      *
      * @param int $id id
@@ -131,6 +107,30 @@ class Handler
     {
         ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
             ->where('claim_type', $this->claimType)->delete();
+    }
+
+    /**
+     * 신고 추가
+     *
+     * @param string        $targetId targetId
+     * @param UserInterface $author   user instance
+     * @param string        $shortCut 바로가기
+     *
+     * @return void
+     */
+    public function add($targetId, UserInterface $author, $shortCut)
+    {
+        if ($this->has($targetId, $author) === true) {
+            throw new Exceptions\AlreadyClaimedException;
+        }
+
+        ClaimLog::create([
+            'claim_type' => $this->claimType,
+            'short_cut' => $shortCut,
+            'target_id' => $targetId,
+            'user_id' => $author->getId(),
+            'ipaddress' => $_SERVER['REMOTE_ADDR'],
+        ]);
     }
 
     /**

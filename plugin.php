@@ -47,6 +47,7 @@ class Plugin extends AbstractPlugin
         app()->singleton('xe.claim.handler', function () {
             return new Handler(app('xe.config'));
         });
+        app()->alias(Handler::class, 'xe.claim.handler');
     }
 
     /**

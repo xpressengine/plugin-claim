@@ -4,5 +4,7 @@
 
 {{-- include contents blade file --}}
 @section('content')
+    <div class="container-fluid container-fluid--part claim">
     {!! isset($content) ? $content : '' !!}
+    </div>
 @show

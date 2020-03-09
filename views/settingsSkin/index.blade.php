@@ -8,15 +8,11 @@
                     </div>
                 </div>
                 <div class="panel-heading">
-                    <div class="pull-right">
-                        <div class="btn-group" role="group" aria-label="...">
-                            {{--<button type="button" class="btn btn-default" data-mode="destroy">--}}
-                                {{--<i class="fa fa-times"></i>--}}
-                                {{--삭제--}}
-                            {{--</button>--}}
-                        </div>
+                    <div class="pull-left">
                     </div>
+                    <div class="pull-right">
 
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <form id="fList" method="post">
