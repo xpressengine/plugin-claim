@@ -44,8 +44,9 @@ class Plugin extends AbstractPlugin
         $this->registerFixedRoute();
         $this->registerSettingsMenu();
 
-        app()->singleton('xe.claim.handler', function () {
-            return new Handler(app('xe.config'));
+        app()->singleton(Handler::class, function () {
+            $proxyClass = app('xe.interception')->proxy(Handler::class);
+            return new $proxyClass(app('xe.config'));
         });
         app()->alias(Handler::class, 'xe.claim.handler');
     }

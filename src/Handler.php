@@ -116,7 +116,7 @@ class Handler
      * @param UserInterface $author   user instance
      * @param string        $shortCut 바로가기
      *
-     * @return void
+     * @return ClaimLog
      */
     public function add($targetId, UserInterface $author, $shortCut)
     {
@@ -124,13 +124,15 @@ class Handler
             throw new Exceptions\AlreadyClaimedException;
         }
 
-        ClaimLog::create([
+        $item = ClaimLog::create([
             'claim_type' => $this->claimType,
             'short_cut' => $shortCut,
             'target_id' => $targetId,
             'user_id' => $author->getId(),
             'ipaddress' => $_SERVER['REMOTE_ADDR'],
         ]);
+
+        return $item;
     }
 
     /**
