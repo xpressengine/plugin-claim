@@ -16,9 +16,6 @@
 
 namespace Xpressengine\Plugins\Claim\ToggleMenus;
 
-use Xpressengine\ToggleMenu\AbstractToggleMenu;
-use Auth;
-
 /**
  * CommentClaimItem
  *
@@ -29,7 +26,6 @@ use Auth;
  * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
  * @link        https://xpressengine.io
  */
-class CommentClaimItem extends BoardClaimItem
+class CommentClaimItem extends AbstractClaimItem
 {
-
 }

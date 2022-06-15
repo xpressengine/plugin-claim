@@ -47,6 +47,9 @@ use Xpressengine\User\Models\User;
  */
 class ClaimLog extends DynamicModel
 {
+    /**
+     * @var string[]
+     */
     protected $guarded = ['id'];
 
     /**
@@ -57,5 +60,13 @@ class ClaimLog extends DynamicModel
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function claimable()
+    {
+        return $this->morphTo(null, 'claim_type', 'target_id');
     }
 }
