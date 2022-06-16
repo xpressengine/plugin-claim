@@ -64,21 +64,10 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
 
 
         if ($handler->has($this->identifier, Auth::user()) === true) {
-            return sprintf(
-                'ClaimToggleMenu.destroyBoard(event, "%s", "%s", "%s")',
-                route('fixed.claim.destroy'),
-                $this->componentType,
-                $this->identifier
-            );
+           return $this->getDestoryAction();
         }
 
-        return sprintf(
-            'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s", "%s")',
-            route('fixed.claim.store'),
-            $this->componentType,
-            $this->identifier,
-            request()->headers->get('referer')
-        );
+        return $this->getStoreAction();
     }
 
     /**
@@ -90,6 +79,45 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
     {
         $path = '/plugins/claim/assets/menu.js';
         return asset(str_replace(base_path(), '', $path));
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDestoryAction()
+    {
+        return sprintf(
+            'ClaimToggleMenu.destroyBoard(event, "%s", "%s", "%s")',
+            route('fixed.claim.destroy'),
+            $this->componentType,
+            $this->identifier
+        );
+    }
+
+    /**
+     * @return string
+     */
+    protected function getStoreAction()
+    {
+        $config = $this->claimHandler()->getConfig();
+
+        if ($config->get('category') === false) {
+            return sprintf(
+                'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s", "%s")',
+                route('fixed.claim.store'),
+                $this->componentType,
+                $this->identifier,
+                request()->headers->get('referer')
+            );
+        }
+
+        return sprintf(
+            'ClaimToggleMenu.openModal(event, "%s", "%s", "%s", "%s")',
+            route('fixed.claim.modal'),
+            $this->componentType,
+            $this->identifier,
+            request()->headers->get('referer')
+        );
     }
 
     /**

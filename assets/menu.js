@@ -28,5 +28,17 @@ var ClaimToggleMenu = {
                 XE.toast('warning', XE.Lang.trans('claim::msgClaimCanceled'));
             }
         });
-    }
+    },
+  openModal: function(e, url, from, targetId, shortCut) {
+      e.preventDefault();
+
+      XE.pageModal(url, {
+        data: {
+          from: from,
+          targetId:targetId,
+          shortCut: shortCut
+        },
+        type: 'get'
+      });
+  },
 };

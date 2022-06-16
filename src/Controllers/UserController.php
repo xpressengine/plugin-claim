@@ -16,10 +16,10 @@
 
 namespace Xpressengine\Plugins\Claim\Controllers;
 
-use Request;
 use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
+use Xpressengine\Http\Request;
 use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedHttpException;
 use Xpressengine\Plugins\Claim\Handler;
 use Xpressengine\Support\Exceptions\LoginRequiredHttpException;
@@ -54,10 +54,10 @@ class UserController extends Controller
      *
      * @return \Xpressengine\Presenter\Presentable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $targetId = Request::get('targetId');
-        $from = Request::get('from');
+        $targetId = $request->get('targetId');
+        $from = $request->get('from');
 
         $this->handler->set($from);
 
@@ -71,24 +71,39 @@ class UserController extends Controller
     }
 
     /**
+     * modal
+     *
+     * @return \Xpressengine\Presenter\Presentable
+     */
+    public function modal(Request $request)
+    {
+        $config = $this->handler->getConfig();
+
+        return api_render('claim::views.modal', [
+            'config' => $config
+        ]);
+    }
+
+    /**
      * store
      *
      * @return \Xpressengine\Presenter\Presentable
      */
-    public function store()
+    public function store(Request $request)
     {
         if (Auth::check() === false) {
             throw new LoginRequiredHttpException;
         }
 
-        $targetId = Request::get('targetId');
-        $shortCut = Request::get('shortCut');
-        $from = Request::get('from');
+        $from = $request->get('from');
+        $targetId = $request->get('targetId');
+        $shortCut = $request->get('shortCut');
+        $categoryItem = $request->get('categoryItem');
 
         $this->handler->set($from);
 
         try {
-            $this->handler->add($targetId, Auth::user(), $shortCut);
+            $this->handler->add($targetId, Auth::user(), $shortCut, $categoryItem);
         } catch (\Exception $e) {
             throw new AlreadyClaimedHttpException;
         }
@@ -100,10 +115,10 @@ class UserController extends Controller
      *
      * @return \Xpressengine\Presenter\Presentable
      */
-    public function destroy()
+    public function destroy(Request $request)
     {
-        $targetId = Request::get('targetId');
-        $from = Request::get('from');
+        $targetId = $request->get('targetId');
+        $from = $request->get('from');
 
         $this->handler->set($from);
 

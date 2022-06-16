@@ -48,6 +48,7 @@ class Plugin extends AbstractPlugin
             $proxyClass = app('xe.interception')->proxy(Handler::class);
             return new $proxyClass(app('xe.config'));
         });
+
         app()->alias(Handler::class, 'xe.claim.handler');
     }
 
@@ -108,6 +109,7 @@ class Plugin extends AbstractPlugin
         $toggleMenuId = 'module/board@board';
         $activated = XeToggleMenu::getActivated($toggleMenuId);
         $itemId = 'module/board@board/toggleMenu/claim@boardClaimItem';
+
         if (isset($activated[$itemId]) === false) {
             $setActivate = array_keys($activated);
             $setActivate[] = $itemId;
@@ -117,6 +119,7 @@ class Plugin extends AbstractPlugin
         $toggleMenuId = 'comment';
         $activated = XeToggleMenu::getActivated($toggleMenuId);
         $itemId = 'comment/toggleMenu/claim@commentClaimItem';
+
         if (isset($activated[$itemId]) === false) {
             $setActivate = array_keys($activated);
             $setActivate[] = $itemId;
@@ -135,6 +138,7 @@ class Plugin extends AbstractPlugin
                 $table->string('user_id', 36);
                 $table->string('ipaddress', 16);
                 $table->string('message', 255);
+                $table->string('category_item_id', 255);
                 $table->timestamp('created_at');
                 $table->timestamp('updated_at');
 
@@ -168,24 +172,32 @@ class Plugin extends AbstractPlugin
     protected function registerManageRoute()
     {
         Route::settings(self::getId(), function () {
-            Route::get(
-                '/',
-                [
-                    'as' => 'manage.claim.claim.index',
-                    'uses' => 'ManagerController@index',
-                    'settings_menu' => 'contents.claim'
-                ]
-            );
-            Route::post('delete', ['as' => 'manage.claim.claim.delete', 'uses' => 'ManagerController@delete']);
-            Route::get('config', ['as' => 'manage.claim.claim.config', 'uses' => 'ManagerController@config']);
-            Route::get(
-                'config/edit',
-                ['as' => 'manage.claim.claim.config.edit', 'uses' => 'ManagerController@configEdit']
-            );
-            Route::post(
-                'config/update',
-                ['as' => 'manage.claim.claim.config.update', 'uses' => 'ManagerController@configUpdate']
-            );
+            Route::get('/', [
+                'as' => 'manage.claim.claim.index',
+                'uses' => 'ManagerController@index',
+                'settings_menu' => 'contents.claim'
+            ]);
+
+            Route::get('config', [
+                'as' => 'manage.claim.claim.config',
+                'uses' => 'ManagerController@config',
+                'settings_menu' => 'setting.claim'
+            ]);
+
+            Route::post('delete', [
+                'as' => 'manage.claim.claim.delete',
+                'uses' => 'ManagerController@delete'
+            ]);
+
+            Route::post('config/update', [
+                'as' => 'manage.claim.claim.config.update',
+                'uses' => 'ManagerController@configUpdate'
+            ]);
+
+            Route::post('config/storeCategory', [
+                'as' => 'manage.claim.claim.config.storeCategory',
+                'uses' => 'ManagerController@storeCategory'
+            ]);
         }, ['namespace' => 'Xpressengine\Plugins\Claim\Controllers']);
     }
 
@@ -197,9 +209,25 @@ class Plugin extends AbstractPlugin
     protected function registerFixedRoute()
     {
         Route::fixed('claim', function () {
-            Route::get('', ['as' => 'fixed.claim.index', 'uses' => 'UserController@index']);
-            Route::post('store', ['as' => 'fixed.claim.store', 'uses' => 'UserController@store']);
-            Route::post('destroy', ['as' => 'fixed.claim.destroy', 'uses' => 'UserController@destroy']);
+            Route::get('', [
+                'as' => 'fixed.claim.index',
+                'uses' => 'UserController@index'
+            ]);
+
+            Route::get('modal', [
+                'as' => 'fixed.claim.modal',
+                'uses' => 'UserController@modal'
+            ]);
+
+            Route::post('store', [
+                'as' => 'fixed.claim.store',
+                'uses' => 'UserController@store'
+            ]);
+
+            Route::post('destroy', [
+                'as' => 'fixed.claim.destroy',
+                'uses' => 'UserController@destroy'
+            ]);
         }, ['namespace' => 'Xpressengine\Plugins\Claim\Controllers']);
     }
 
@@ -208,7 +236,7 @@ class Plugin extends AbstractPlugin
      *
      * @return void
      */
-    public static function registerSettingsMenu()
+    public function registerSettingsMenu()
     {
         // settings menu 등록
         $menus = [
@@ -218,7 +246,14 @@ class Plugin extends AbstractPlugin
                 'description' => 'blur blur~',
                 'ordering' => 5000
             ],
+            'setting.claim' => [
+                'title' => 'xe::claim',
+                'display' => true,
+                'description' => 'blur blur~',
+                'ordering' => 5000
+            ],
         ];
+
         foreach ($menus as $id => $menu) {
             app('xe.register')->push('settings/menu', $id, $menu);
         }

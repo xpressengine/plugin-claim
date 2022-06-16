@@ -16,10 +16,9 @@
 
 namespace Xpressengine\Plugins\Claim;
 
-use Xpressengine\Counter\Counter;
+use Xpressengine\Config\ConfigEntity;
 use Xpressengine\Config\ConfigManager;
 use Xpressengine\Plugins\Claim\Models\ClaimLog;
-use Xpressengine\User\Models\User;
 use Xpressengine\User\UserInterface;
 
 /**
@@ -57,6 +56,20 @@ class Handler
     public function __construct(ConfigManager $configManager)
     {
         $this->configManager = $configManager;
+    }
+
+    /**
+     * @return ConfigEntity
+     */
+    public function getConfig()
+    {
+        $config = $this->configManager->get(static::CONFIG_NAME);
+
+        if ($config === null) {
+            $config = $this->configManager->set(static::CONFIG_NAME, []);
+        }
+
+        return $config;
     }
 
     /**
@@ -116,23 +129,29 @@ class Handler
      * @param UserInterface $author   user instance
      * @param string        $shortCut 바로가기
      *
-     * @return ClaimLog
+     * @return void
      */
-    public function add($targetId, UserInterface $author, $shortCut)
+    public function add($targetId, UserInterface $author, $shortCut, int $categoryItemId = null)
     {
         if ($this->has($targetId, $author) === true) {
             throw new Exceptions\AlreadyClaimedException;
         }
 
-        $item = ClaimLog::create([
+        $config = $this->getConfig();
+
+        $data = [
             'claim_type' => $this->claimType,
             'short_cut' => $shortCut,
             'target_id' => $targetId,
             'user_id' => $author->getId(),
-            'ipaddress' => $_SERVER['REMOTE_ADDR'],
-        ]);
+            'ipaddress' => request()->ip()
+        ];
 
-        return $item;
+        if ($categoryItemId !== null && $config->get('category') === true) {
+            $data['category_item_id'] = $categoryItemId;
+        }
+
+        ClaimLog::create($data);
     }
 
     /**
@@ -145,7 +164,10 @@ class Handler
      */
     public function has($targetId, UserInterface $author)
     {
-        return ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
-                ->where('claim_type', $this->claimType)->first() !== null;
+        $claimLog = ClaimLog::where('user_id', $author->getId())
+                ->where('target_id', $targetId)
+                ->where('claim_type', $this->claimType);
+
+        return $claimLog->first() !== null;
     }
 }
