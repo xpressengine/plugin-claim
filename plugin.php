@@ -177,7 +177,7 @@ class Plugin extends AbstractPlugin
     protected function updateClaimLogTable()
     {
         if (Schema::hasColumn('claim_logs', 'category_item_id') === false) {
-            Schema::table('site', function (Blueprint $table) {
+            Schema::table('claim_logs', function (Blueprint $table) {
                 $table->string('category_item_id', 255)->nullable()->after('message');
             });
         }
