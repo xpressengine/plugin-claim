@@ -63,14 +63,25 @@ class Plugin extends AbstractPlugin
     }
 
     /**
+     * @return void
+     */
+    public function install()
+    {
+        $this->createClaimLogTable();
+        $this->putLang();
+        $this->setToggleMenuConfig();
+    }
+
+    /**
      * @return boolean
      */
-    public function checkUpdated($installedVersion = NULL)
+    public function checkUpdated($installedVersion = null)
     {
         if (version_compare($installedVersion, '0.9.1', '<=')) {
             $toggleMenuId = 'module/board@board';
             $activated = XeToggleMenu::getActivated($toggleMenuId);
             $itemId = 'module/board@board/toggleMenu/claim@boardClaimItem';
+
             if (isset($activated[$itemId]) === false) {
                 return false;
             }
@@ -78,25 +89,31 @@ class Plugin extends AbstractPlugin
             $toggleMenuId = 'comment';
             $activated = XeToggleMenu::getActivated($toggleMenuId);
             $itemId = 'comment/toggleMenu/claim@commentClaimItem';
+
             if (isset($activated[$itemId]) === false) {
                 return false;
             }
         }
 
+        if ($this->checkUpdatedClaimLogTable() === false) {
+            return false;
+        }
+
         return true;
     }
 
+    /**
+     * @param $installedVersion
+     * @reutrn void
+     */
     public function update($installedVersion = null)
     {
         $this->putLang();
         $this->setToggleMenuConfig();
-    }
 
-    public function install()
-    {
-        $this->createClaimLogTable();
-        $this->putLang();
-        $this->setToggleMenuConfig();
+        if ($this->checkUpdatedClaimLogTable() === false) {
+            $this->updateClaimLogTable();
+        }
     }
 
     /**
@@ -127,7 +144,12 @@ class Plugin extends AbstractPlugin
         }
     }
 
-    public function createClaimLogTable()
+    /**
+     * Create Claim Log Table
+     *
+     * @reutrn void
+     */
+    protected function createClaimLogTable()
     {
         if (Schema::hasTable('claim_logs') === false) {
             Schema::create('claim_logs', function (Blueprint $table) {
@@ -138,9 +160,8 @@ class Plugin extends AbstractPlugin
                 $table->string('user_id', 36);
                 $table->string('ipaddress', 16);
                 $table->string('message', 255);
-                $table->string('category_item_id', 255);
-                $table->timestamp('created_at');
-                $table->timestamp('updated_at');
+                $table->string('category_item_id', 255)->nullable();
+                $table->timestamps();
 
                 $table->index(['target_id', 'user_id']);
                 $table->index(['target_id', 'claim_type']);
@@ -148,6 +169,33 @@ class Plugin extends AbstractPlugin
         }
     }
 
+    /**
+     * Update Claim Log Table
+     *
+     * @return void
+     */
+    protected function updateClaimLogTable()
+    {
+        if (Schema::hasColumn('claim_logs', 'category_item_id') === false) {
+            Schema::table('site', function (Blueprint $table) {
+                $table->string('category_item_id', 255)->nullable()->after('message');
+            });
+        }
+    }
+
+    /**
+     * Check Updated Claim Log Table
+     *
+     * @return bool
+     */
+    protected function checkUpdatedClaimLogTable()
+    {
+        return Schema::hasColumn('claim_logs', 'category_item_id') === true;
+    }
+
+    /**
+     * @return void
+     */
     protected function putLang()
     {
         app('xe.translator')->putFromLangDataSource('claim', base_path('plugins/claim/langs/lang.php'));
@@ -191,7 +239,7 @@ class Plugin extends AbstractPlugin
 
             Route::post('config/update', [
                 'as' => 'manage.claim.claim.config.update',
-                'uses' => 'ManagerController@configUpdate'
+                'uses' => 'ManagerController@updateConfig'
             ]);
 
             Route::post('config/storeCategory', [
