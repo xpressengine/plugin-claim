@@ -125,13 +125,14 @@ class Handler
     /**
      * 신고 추가
      *
-     * @param string        $targetId targetId
-     * @param UserInterface $author   user instance
-     * @param string        $shortCut 바로가기
-     *
+     * @param  string  $targetId  targetId
+     * @param  UserInterface  $author  user instance
+     * @param  string  $shortCut  바로가기
+     * @param  mixed|null  $categoryItem
+     * @param  null  $message
      * @return void
      */
-    public function add($targetId, UserInterface $author, $shortCut, int $categoryItemId = null)
+    public function add($targetId, UserInterface $author, $shortCut, $categoryItem = null, $message = null)
     {
         if ($this->has($targetId, $author) === true) {
             throw new Exceptions\AlreadyClaimedException;
@@ -144,11 +145,15 @@ class Handler
             'short_cut' => $shortCut,
             'target_id' => $targetId,
             'user_id' => $author->getId(),
-            'ipaddress' => request()->ip()
+            'ipaddress' => request()->ip(),
         ];
 
-        if ($categoryItemId !== null && $config->get('category') === true) {
-            $data['category_item_id'] = $categoryItemId;
+        if ($categoryItem !== null && $config->get('category') === true) {
+            $data['category_item_id'] = $categoryItem;
+        }
+
+        if ($message !== null) {
+            $data['message'] = $message;
         }
 
         ClaimLog::create($data);

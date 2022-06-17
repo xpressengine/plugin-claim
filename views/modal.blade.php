@@ -7,36 +7,24 @@
         <div class="skin-modal-desc">신고는 반대 의견을 표시하는 기능이 아닙니다.</div>
     </div>
     <div class="xe-modal-body skin-modal-body">
+        {{ csrf_field()  }}
 
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="from" value="{{ request('from') }}" />
+        <input type="hidden" name="targetId" value="{{ request('targetId')  }}" />
+        <input type="hidden" name="shortCut" value="{{ request('shortCut')  }}" />
 
         <div class="skin-modal-sub">신고사유<span class="skin-modal-desc">여러 사유에 해당하는 경우 대표적인 사유 1개 선택</span></div>
-        
+
         <div class="skin-modal-content-toggle-wrap">
-            <label>
-                <input name="claim_type" type="radio" value="1" />
-                회원 분란 유도
-            </label>
-            <label>
-                <input name="claim_type" type="radio" value="1" />
-                허위사실 유포
-            </label>
-            <label>
-                <input name="claim_type" type="radio" value="1" />
-                욕설/반말북적절한 언어
-            </label>
-            <label>
-                <input name="claim_type" type="radio" value="1" />
-                음란성/선정성
-            </label>
-            <label>
-                <input name="claim_type" type="radio" value="1" />
-                영리목적/홍보상
-            </label>
+            @foreach($categoryItems as $categoryItem)
+                <label>
+                    <input name="categoryItem" type="radio" value="{{ $categoryItem->id  }}" required/>
+                    {{ xe_trans($categoryItem->word)  }}
+                </label>
+            @endforeach
         </div>
-        <textarea name="calim_description" maxLength="300" placeholder="신고사유 설명이 추가로 필요하실 경우에만 작성해주세요.\n(최대 300자 이내로 작성해주세요.)" value="">
-        </textarea>
-        
+        <textarea name="message" maxLength="300" placeholder="신고사유 설명이 추가로 필요하실 경우에만 작성해주세요.\n(최대 300자 이내로 작성해주세요.)" value="" style="resize: none"></textarea>
+
         <div class="skin-modal-content-alert">
             <ul>
                 <li>허위 신고의 경우, 신고자의 서비스 활동이 제한될 수 있으니 신중하게 신고해주세요.</li>
@@ -54,10 +42,8 @@
     $("#claim-modal").submit(function(e) {
         e.preventDefault();
 
+        var $this = $(this);
         var formData = new FormData(this);
-
-        console.log(this);
-        console.log(formData);
 
         $.ajax({
             cache : false,
@@ -67,7 +53,8 @@
             type : 'POST',
             data : formData,
             success : function(data) {
-                $(this).find('button.xe-btn-secondary').click();
+                $this.find('.skin-modal-btn--cancle').click();
+                XE.toast('success', XE.Lang.trans('claim::msgClaimReceived'));
             }
         });
     });
@@ -83,7 +70,7 @@
         font-family: 'Pretendard';
         color: white;
     }
-   
+
     .skin-poly-modal .skin-modal-header {
         background: #333;
         border-bottom: none;

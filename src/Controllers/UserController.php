@@ -19,6 +19,7 @@ namespace Xpressengine\Plugins\Claim\Controllers;
 use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
+use Xpressengine\Category\CategoryHandler;
 use Xpressengine\Http\Request;
 use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedHttpException;
 use Xpressengine\Plugins\Claim\Handler;
@@ -75,12 +76,23 @@ class UserController extends Controller
      *
      * @return \Xpressengine\Presenter\Presentable
      */
-    public function modal(Request $request)
+    public function modal(Request $request, CategoryHandler $categoryHandler)
     {
         $config = $this->handler->getConfig();
+        $categoryItems = collect([]);
+
+        \XeFrontend::translation(['claim::msgClaimReceived']);
+
+        if ($config->get('category', false) === true) {
+            $categoryItems = $categoryHandler->items()
+                ->where('category_id', $config->get('categoryId'))
+                ->orderBy('ordering')
+                ->get();
+        }
 
         return api_render('claim::views.modal', [
-            'config' => $config
+            'config' => $config,
+            'categoryItems' => $categoryItems
         ]);
     }
 
@@ -99,15 +111,17 @@ class UserController extends Controller
         $targetId = $request->get('targetId');
         $shortCut = $request->get('shortCut');
         $categoryItem = $request->get('categoryItem');
+        $message = $request->get('message');
 
         $this->handler->set($from);
 
         try {
-            $this->handler->add($targetId, Auth::user(), $shortCut, $categoryItem);
+            $this->handler->add($targetId, Auth::user(), $shortCut, $categoryItem, $message);
         } catch (\Exception $e) {
             throw new AlreadyClaimedHttpException;
         }
-        return $this->index();
+
+        return $this->index($request);
     }
 
     /**
@@ -124,6 +138,6 @@ class UserController extends Controller
 
         $this->handler->removeByTargetId($targetId, Auth::user());
 
-        return $this->index();
+        return $this->index($request);
     }
 }
