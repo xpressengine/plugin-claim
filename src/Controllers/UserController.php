@@ -78,6 +78,10 @@ class UserController extends Controller
      */
     public function modal(Request $request, CategoryHandler $categoryHandler)
     {
+        if (Auth::check() === false) {
+            throw new LoginRequiredHttpException();
+        }
+
         $config = $this->handler->getConfig();
         $categoryItems = collect([]);
 
@@ -104,7 +108,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         if (Auth::check() === false) {
-            throw new LoginRequiredHttpException;
+            throw new LoginRequiredHttpException();
         }
 
         $from = $request->get('from');
@@ -118,7 +122,7 @@ class UserController extends Controller
         try {
             $this->handler->add($targetId, Auth::user(), $shortCut, $categoryItem, $message);
         } catch (\Exception $e) {
-            throw new AlreadyClaimedHttpException;
+            throw new AlreadyClaimedHttpException();
         }
 
         return $this->index($request);
@@ -131,6 +135,10 @@ class UserController extends Controller
      */
     public function destroy(Request $request)
     {
+        if (Auth::check() === false) {
+            throw new LoginRequiredHttpException();
+        }
+
         $targetId = $request->get('targetId');
         $from = $request->get('from');
 
