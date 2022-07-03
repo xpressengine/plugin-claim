@@ -153,6 +153,10 @@ class Plugin extends AbstractPlugin
     {
         if (Schema::hasTable('claim_logs') === false) {
             Schema::create('claim_logs', function (Blueprint $table) {
+                // claim_logs table
+                $table->engine = 'InnoDB';
+
+                // columns
                 $table->bigIncrements('id');
                 $table->string('claim_type', 36);
                 $table->string('short_cut', 255);
@@ -163,8 +167,17 @@ class Plugin extends AbstractPlugin
                 $table->string('category_item_id', 255)->nullable();
                 $table->timestamps();
 
+                // index
+                $table->index('user_id');
+                $table->index('category_item_id');
                 $table->index(['target_id', 'user_id']);
                 $table->index(['target_id', 'claim_type']);
+            });
+
+            Schema::table('claim_logs', function (Blueprint $table) {
+                // foreign
+                $table->foreign('user_id')->references('id')->on('user');
+                $table->foreign('category_item_id')->references('id')->on('category_item');
             });
         }
     }
