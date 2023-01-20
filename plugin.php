@@ -19,9 +19,10 @@ use Route;
 use Schema;
 use XeToggleMenu;
 use Xpressengine\Plugin\AbstractPlugin;
+use Xpressengine\Plugin\PluginRegister;
 
 /**
- * Plugin
+ * Claim Plugin
  *
  * @category    Claim
  * @package     Xpressengine\Plugins\Claim
@@ -34,7 +35,6 @@ class Plugin extends AbstractPlugin
 {
     /**
      * boot
-     *
      * @return void
      */
     public function boot()
@@ -53,7 +53,6 @@ class Plugin extends AbstractPlugin
 
     /**
      * activate
-     *
      * @param null $installedVersion installed version
      * @return void
      */
@@ -62,6 +61,7 @@ class Plugin extends AbstractPlugin
     }
 
     /**
+     * check for updates
      * @return boolean
      */
     public function checkUpdated($installedVersion = NULL)
@@ -88,35 +88,29 @@ class Plugin extends AbstractPlugin
     public function update($installedVersion = null)
     {
         $this->putLang();
-        $this->setToggleMenuConfig();
+        $this->setToggleMenuConfigs();
     }
 
     public function install()
     {
         $this->createClaimLogTable();
         $this->putLang();
-        $this->setToggleMenuConfig();
+        $this->setToggleMenuConfigs();
     }
 
     /**
-     * set toggle menu item to board, comment
-     *
+     * set toggle menu item to board, comment, user
      * @return void
      */
-    protected function setToggleMenuConfig()
+    protected function setToggleMenuConfigs()
     {
-        $toggleMenuId = 'module/board@board';
-        $activated = XeToggleMenu::getActivated($toggleMenuId);
-        $itemId = 'module/board@board/toggleMenu/claim@boardClaimItem';
-        if (isset($activated[$itemId]) === false) {
-            $setActivate = array_keys($activated);
-            $setActivate[] = $itemId;
-            XeToggleMenu::setActivates($toggleMenuId, null, $setActivate);
-        }
+        $this->setToggleMenuConfig('module/board@board', 'module/board@board/toggleMenu/claim@boardClaimItem');
+        $this->setToggleMenuConfig('comment', 'comment/toggleMenu/claim@commentClaimItem');
+    }
 
-        $toggleMenuId = 'comment';
+    protected function setToggleMenuConfig(string $toggleMenuId, string $itemId)
+    {
         $activated = XeToggleMenu::getActivated($toggleMenuId);
-        $itemId = 'comment/toggleMenu/claim@commentClaimItem';
         if (isset($activated[$itemId]) === false) {
             $setActivate = array_keys($activated);
             $setActivate[] = $itemId;
@@ -151,18 +145,19 @@ class Plugin extends AbstractPlugin
 
     /**
      * register toggle menu
-     *
      * @return void
      */
     protected function registerToggleMenu()
     {
-        app('xe.pluginRegister')->add(ToggleMenus\BoardClaimItem::class);
-        app('xe.pluginRegister')->add(ToggleMenus\CommentClaimItem::class);
+        /** @var PluginRegister $pluginRegister */
+        $pluginRegister = app('xe.pluginRegister');
+        $pluginRegister->add(ToggleMenus\BoardClaimItem::class);
+        $pluginRegister->add(ToggleMenus\CommentClaimItem::class);
+        $pluginRegister->add(ToggleMenus\UserClaimItem::class);
     }
 
     /**
-     * Register Plugin Settings Route
-     *
+     * register plugin settings routes
      * @return void
      */
     protected function registerManageRoute()
@@ -191,7 +186,6 @@ class Plugin extends AbstractPlugin
 
     /**
      * register fixed route
-     *
      * @return void
      */
     protected function registerFixedRoute()
@@ -205,7 +199,6 @@ class Plugin extends AbstractPlugin
 
     /**
      * register interception
-     *
      * @return void
      */
     public static function registerSettingsMenu()
@@ -215,7 +208,7 @@ class Plugin extends AbstractPlugin
             'contents.claim' => [
                 'title' => 'xe::claim',
                 'display' => true,
-                'description' => 'blur blur~',
+                'description' => 'xe::claim',
                 'ordering' => 5000
             ],
         ];

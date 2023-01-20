@@ -16,7 +16,7 @@
 
 namespace Xpressengine\Plugins\Claim;
 
-use Xpressengine\Support\Exceptions\XpressengineException;
+use Xpressengine\Support\Exceptions\HttpXpressengineException;
 
 /**
  * ClaimException
@@ -28,7 +28,7 @@ use Xpressengine\Support\Exceptions\XpressengineException;
  * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
  * @link        https://xpressengine.io
  */
-class ClaimException extends XpressengineException
+class ClaimException extends HttpXpressengineException
 {
 
 }

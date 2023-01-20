@@ -20,9 +20,9 @@ use Request;
 use XePresenter;
 use Auth;
 use App\Http\Controllers\Controller;
-use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedHttpException;
-use Xpressengine\Plugins\Claim\Handler;
 use Xpressengine\Support\Exceptions\LoginRequiredHttpException;
+use Xpressengine\Plugins\Claim\Handler;
+use Xpressengine\Plugins\Claim\Exceptions\AlreadyClaimedException;
 
 /**
  * UserController
@@ -90,7 +90,7 @@ class UserController extends Controller
         try {
             $this->handler->add($targetId, Auth::user(), $shortCut);
         } catch (\Exception $e) {
-            throw new AlreadyClaimedHttpException;
+            throw new AlreadyClaimedException;
         }
         return $this->index();
     }

@@ -1,5 +1,5 @@
 var ClaimToggleMenu = {
-    storeBoard: function(e, url, from, targetId, shortCut) {
+    storeClaim: function(e, url, from, targetId, shortCut) {
         e.preventDefault();
         var _o = $(e.target)[0];
 
@@ -14,7 +14,7 @@ var ClaimToggleMenu = {
             }
         });
     },
-    destroyBoard: function(e, url, from, targetId) {
+    destroyClaim: function(e, url, from, targetId) {
         e.preventDefault();
         var _o = $(e.target)[0];
 

@@ -16,27 +16,21 @@
 
 namespace Xpressengine\Plugins\Claim\Models;
 
-use Xpressengine\Config\ConfigEntity;
-use Xpressengine\Database\Eloquent\DynamicModel;
-use Xpressengine\Document\Exceptions\NotAllowedTypeException;
-use Xpressengine\Document\Exceptions\DocumentNotFoundException;
-use Xpressengine\Document\Exceptions\ReplyLimitationException;
-use Xpressengine\Document\Exceptions\ValueRequiredException;
-use Illuminate\Database\Eloquent\Builder as OriginBuilder;
 use Xpressengine\User\Models\User;
+use Xpressengine\Database\Eloquent\DynamicModel;
 
 /**
  * ClaimLog
  *
  * @property int    id
- * @property string claimType
- * @property string shortCut
- * @property string targetId
- * @property string uiserId
+ * @property string claim_type
+ * @property string short_cut
+ * @property string target_id
+ * @property string user_id
  * @property string ipaddress
  * @property string message
- * @property string createdAt
- * @property string updatedAt
+ * @property string created_at
+ * @property string updated_at
  *
  * @category    Claim
  * @package     Xpressengine\Plugins\Claim

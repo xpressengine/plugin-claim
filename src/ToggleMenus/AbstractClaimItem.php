@@ -65,7 +65,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
 
         if ($handler->has($this->identifier, Auth::user()) === true) {
             return sprintf(
-                'ClaimToggleMenu.destroyBoard(event, "%s", "%s", "%s")',
+                'ClaimToggleMenu.destroyClaim(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),
                 $this->componentType,
                 $this->identifier
@@ -73,7 +73,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
         }
 
         return sprintf(
-            'ClaimToggleMenu.storeBoard(event, "%s", "%s", "%s", "%s")',
+            'ClaimToggleMenu.storeClaim(event, "%s", "%s", "%s", "%s")',
             route('fixed.claim.store'),
             $this->componentType,
             $this->identifier,

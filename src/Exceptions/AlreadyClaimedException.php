@@ -16,6 +16,7 @@
 
 namespace Xpressengine\Plugins\Claim\Exceptions;
 
+use Symfony\Component\HttpFoundation\Response;
 use Xpressengine\Plugins\Claim\ClaimException;
 
 /**
@@ -30,5 +31,7 @@ use Xpressengine\Plugins\Claim\ClaimException;
  */
 class AlreadyClaimedException extends ClaimException
 {
+    protected $message = 'claim::AlreadyClaimed';
 
+    protected $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
 }
