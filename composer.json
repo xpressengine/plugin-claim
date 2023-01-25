@@ -35,6 +35,11 @@
           "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\CommentClaimItem",
           "name": "댓글 신고 토글 메뉴",
           "description": ""
+        },
+        "user/toggleMenu/claim@userClaimItem": {
+          "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\UserClaimItem",
+          "name": "유저 신고 토글 메뉴",
+          "description": ""
         }
       }
     }

@@ -17,7 +17,6 @@
 namespace Xpressengine\Plugins\Claim\Exceptions;
 
 use Symfony\Component\HttpFoundation\Response;
-use Xpressengine\Plugins\Claim\ClaimException;
 
 /**
  * AlreadyClaimedException

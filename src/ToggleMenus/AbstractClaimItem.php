@@ -60,8 +60,8 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
         XeFrontend::translation([
             'claim::msgClaimReceived',
             'claim::msgClaimCanceled',
+            'claim::enterClaimReason'
         ]);
-
 
         if ($handler->has($this->identifier, Auth::user()) === true) {
             return sprintf(

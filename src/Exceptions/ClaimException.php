@@ -14,7 +14,7 @@
  * @link        https://xpressengine.io
  */
 
-namespace Xpressengine\Plugins\Claim;
+namespace Xpressengine\Plugins\Claim\Exceptions;
 
 use Xpressengine\Support\Exceptions\HttpXpressengineException;
 
@@ -30,5 +30,5 @@ use Xpressengine\Support\Exceptions\HttpXpressengineException;
  */
 class ClaimException extends HttpXpressengineException
 {
-
+    protected $message = 'claim::claimException';
 }

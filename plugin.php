@@ -20,6 +20,7 @@ use Schema;
 use XeToggleMenu;
 use Xpressengine\Plugin\AbstractPlugin;
 use Xpressengine\Plugin\PluginRegister;
+use Xpressengine\Plugins\Claim\Types;
 
 /**
  * Claim Plugin
@@ -34,6 +35,16 @@ use Xpressengine\Plugin\PluginRegister;
 class Plugin extends AbstractPlugin
 {
     /**
+     * claim types
+     * @var string[]
+     */
+    protected $claimTypes = [
+        Types\ClaimTypeUser::class,
+        Types\ClaimTypeBoard::class,
+        Types\ClaimTypeComment::class,
+    ];
+
+    /**
      * boot
      * @return void
      */
@@ -46,7 +57,7 @@ class Plugin extends AbstractPlugin
 
         app()->singleton(Handler::class, function () {
             $proxyClass = app('xe.interception')->proxy(Handler::class);
-            return new $proxyClass(app('xe.config'));
+            return new $proxyClass(app('xe.config'), $this->getActivateClaimTypes());
         });
         app()->alias(Handler::class, 'xe.claim.handler');
     }
@@ -106,6 +117,7 @@ class Plugin extends AbstractPlugin
     {
         $this->setToggleMenuConfig('module/board@board', 'module/board@board/toggleMenu/claim@boardClaimItem');
         $this->setToggleMenuConfig('comment', 'comment/toggleMenu/claim@commentClaimItem');
+        $this->setToggleMenuConfig('user', 'user/toggleMenu/claim@userClaimItem');
     }
 
     protected function setToggleMenuConfig(string $toggleMenuId, string $itemId)
@@ -191,9 +203,9 @@ class Plugin extends AbstractPlugin
     protected function registerFixedRoute()
     {
         Route::fixed('claim', function () {
-            Route::get('', ['as' => 'fixed.claim.index', 'uses' => 'UserController@index']);
-            Route::post('store', ['as' => 'fixed.claim.store', 'uses' => 'UserController@store']);
-            Route::post('destroy', ['as' => 'fixed.claim.destroy', 'uses' => 'UserController@destroy']);
+            Route::get('', ['as' => 'fixed.claim.index', 'uses' => 'ClaimController@index']);
+            Route::post('store', ['as' => 'fixed.claim.store', 'uses' => 'ClaimController@store']);
+            Route::post('destroy', ['as' => 'fixed.claim.destroy', 'uses' => 'ClaimController@destroy']);
         }, ['namespace' => 'Xpressengine\Plugins\Claim\Controllers']);
     }
 
@@ -215,5 +227,22 @@ class Plugin extends AbstractPlugin
         foreach ($menus as $id => $menu) {
             app('xe.register')->push('settings/menu', $id, $menu);
         }
+    }
+
+    /**
+     * get activate claim types
+     * @return array
+     */
+    public function getActivateClaimTypes()
+    {
+        $types = [];
+        foreach ($this->claimTypes as $claimType) {
+            $type = app($claimType);
+            if ($type instanceof Types\AbstractClaimType && class_exists($type->getClass())) {
+                $types[$type->getName()] = $type;
+            }
+        }
+
+        return $types;
     }
 }
