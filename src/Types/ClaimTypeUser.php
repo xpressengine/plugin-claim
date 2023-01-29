@@ -4,7 +4,6 @@ namespace Xpressengine\Plugins\Claim\Types;
 
 use Xpressengine\User\Models\User;
 use Xpressengine\User\UserInterface;
-use Xpressengine\Plugins\Claim\Handler as ClaimHandler;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportAdminException;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportMyselfException;
 use Xpressengine\Plugins\Claim\Exceptions\GuestCannotReportException;
@@ -42,9 +41,7 @@ class ClaimTypeUser extends AbstractClaimType
      * report target
      * @return void
      */
-    public function report(
-        ClaimHandler $handler,
-        UserInterface $author,
+    public function report(UserInterface $author,
         string $targetId,
         string $shortCut,
         string $message = ''
@@ -52,28 +49,24 @@ class ClaimTypeUser extends AbstractClaimType
         /** @var User $target */
         $target = User::findOrFail($targetId);
 
-        $this->checkReportConditions($handler, $author, $target);
+        $this->checkReportConditions($author, $target);
 
-        parent::report($handler, $author, $targetId, $shortCut, $message);
+        parent::report($author, $targetId, $shortCut, $message);
     }
 
     /**
      * check report conditions
-     * @param ClaimHandler $handler
      * @param UserInterface $author
      * @param $target
      * @return void
      */
-    public function checkReportConditions(
-        ClaimHandler $handler,
-        UserInterface $author,
-        $target
-    ) {
+    public function checkReportConditions(UserInterface $author, $target)
+    {
         if (($author instanceof User) === false) {
             throw new GuestCannotReportException();
         }
 
-        if ($target->getId() === $author->getId()) {
+        if ($target->getKey() === $author->getKey()) {
             throw new CantReportMyselfException();
         }
 
@@ -85,6 +78,6 @@ class ClaimTypeUser extends AbstractClaimType
             throw new CantReportWithdrawnUserException();
         }
 
-        parent::checkReportConditions($handler, $author, $target->getId());
+        parent::checkReportConditions($author, $target->getKey());
     }
 }

@@ -70,30 +70,21 @@ abstract class AbstractClaimType
      * report target
      * @return void
      */
-    public function report(
-        ClaimHandler $handler,
-        UserInterface $author,
-        string $targetId,
-        string $shortCut,
-        string $message = ''
-    ) {
-        $handler->add($targetId, $author, $shortCut, $message);
+    public function report(UserInterface $author, string $targetId, string $shortCut, string $message = '')
+    {
+        app('xe.claim.handler')->add($this->name, $targetId, $author, $shortCut, $message);
     }
 
     /**
      * check report conditions
-     * @param ClaimHandler $handler
      * @param UserInterface $author
      * @param T $target
      * @return void
      */
-    public function checkReportConditions(
-        ClaimHandler $handler,
-        UserInterface $author,
-        $target
-    ) {
+    public function checkReportConditions(UserInterface $author, $target)
+    {
         // TODO 중복 신고 ON/OFF 기능 추가 후 적용
-        /*if ($handler->has($target, $author) === true) {
+        /*if (app('xe.claim.handler')->has($target, $author) === true) {
             throw new AlreadyClaimedException();
         }*/
     }

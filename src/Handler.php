@@ -16,6 +16,11 @@
 
 namespace Xpressengine\Plugins\Claim;
 
+use App\Facades\XeDB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Xpressengine\Plugins\Claim\Exceptions\ClaimException;
+use Xpressengine\Plugins\Claim\Exceptions\NotFoundClaimTargetException;
 use Xpressengine\User\UserInterface;
 use Xpressengine\Config\ConfigManager;
 use Xpressengine\Plugins\Claim\Models\ClaimLog;
@@ -47,11 +52,6 @@ class Handler
     /**
      * @var string
      */
-    protected $claimType;
-
-    /**
-     * @var string
-     */
     const CONFIG_NAME = 'Claim';
 
     /**
@@ -65,27 +65,42 @@ class Handler
     }
 
     /**
-     * claim 에서 사용 할 type name 설정
-     * @param string $claimType
+     * claim type 등록
+     * @param AbstractClaimType $claimType
      * @return void
      */
-    public function set(string $claimType)
+    public function registerClaimType(AbstractClaimType $claimType)
+    {
+        if (!array_key_exists($claimType->getName(), $this->activateClaimTypes)) {
+            $this->activateClaimTypes[$claimType->getName()] = $claimType;
+        }
+    }
+
+    /**
+     * 해당 컨텐츠가 신고된 횟수를 반환
+     * @param string $claimType
+     * @param string $targetId
+     * @return int
+     */
+    public function count(string $claimType, string $targetId)
+    {
+        return ClaimLog::where('target_id', $targetId)
+            ->where('claim_type', $claimType)
+            ->count();
+    }
+
+    /**
+     * 해당 키의 claim type을 반환
+     * @param string $claimType
+     * @return AbstractClaimType
+     */
+    public function getClaimTypeByKey(string $claimType)
     {
         if (!array_key_exists($claimType, $this->activateClaimTypes)) {
             throw new NotSupportClaimTypeException();
         }
 
-        $this->claimType = $claimType;
-    }
-
-    /**
-     * 신고 수
-     * @param string $targetId
-     * @return int
-     */
-    public function count(string $targetId)
-    {
-        return ClaimLog::where('target_id', $targetId)->where('claim_type', $this->claimType)->count();
+        return $this->activateClaimTypes[$claimType];
     }
 
     /**
@@ -100,53 +115,80 @@ class Handler
 
     /**
      * 신고 로그 삭제
+     * @param string $claimType
      * @param string $targetId
      * @param UserInterface $author
      * @return void
      */
-    public function removeByTargetId(string $targetId, UserInterface $author)
+    public function removeByTargetId(string $claimType, string $targetId, UserInterface $author)
     {
-        ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
-            ->where('claim_type', $this->claimType)->delete();
+        ClaimLog::where('user_id', $author->getKey())
+            ->where('target_id', $targetId)
+            ->where('claim_type', $claimType)
+            ->delete();
     }
 
     /**
      * 대상을 신고
+     * @param string $claimType
      * @param string $targetId
      * @param UserInterface $author
      * @param string $shortCut
      * @param string $message
      * @return void
      */
-    public function report(string $targetId, UserInterface $author, string $shortCut, string $message = '')
-    {
-        if (!array_key_exists($this->claimType, $this->activateClaimTypes)) {
-            throw new NotSupportClaimTypeException();
+    public function report(
+        string $claimType,
+        string $targetId,
+        UserInterface $author,
+        string $shortCut,
+        string $message = ''
+    ) {
+        XeDB::beginTransaction();
+
+        try {
+            $claimType = $this->getClaimTypeByKey($claimType);
+            $claimType->report($author, $targetId, $shortCut, $message);
+        } catch (ClaimException $e) {
+            XeDB::rollback();
+            throw $e;
+        } catch (ModelNotFoundException $e) {
+            XeDB::rollback();
+            throw new NotFoundClaimTargetException();
+        } catch (\Exception $e) {
+            XeDB::rollback();
+            Log::error($e);
+            throw new ClaimException();
         }
 
-        $claimType = $this->activateClaimTypes[$this->claimType];
-        $claimType->report($this, $author, $targetId, $shortCut, $message);
+        XeDB::commit();
     }
 
     /**
      * 신고 로그 등록
+     * @param string $claimType
      * @param string $targetId
      * @param UserInterface $author
      * @param string $shortCut
      * @param string $message
      * @return ClaimLog
      */
-    public function add(string $targetId, UserInterface $author, string $shortCut, string $message = '')
-    {
-        if ($this->has($targetId, $author) === true) {
+    public function add(
+        string $claimType,
+        string $targetId,
+        UserInterface $author,
+        string $shortCut,
+        string $message = ''
+    ) {
+        if ($this->has($claimType, $targetId, $author) === true) {
             throw new Exceptions\AlreadyClaimedException;
         }
 
         return ClaimLog::create([
-            'claim_type' => $this->claimType,
+            'claim_type' => $claimType,
             'short_cut' => $shortCut,
             'target_id' => $targetId,
-            'user_id' => $author->getId(),
+            'user_id' => $author->getKey(),
             'message' => $message,
             'ipaddress' => $_SERVER['REMOTE_ADDR'],
         ]);
@@ -154,13 +196,16 @@ class Handler
 
     /**
      * 신고 여부
+     * @param string $claimType
      * @param string $targetId
      * @param UserInterface $author
      * @return bool
      */
-    public function has(string $targetId, UserInterface $author)
+    public function has(string $claimType, string $targetId, UserInterface $author)
     {
-        return ClaimLog::where('user_id', $author->getId())->where('target_id', $targetId)
-                ->where('claim_type', $this->claimType)->first() !== null;
+        return ClaimLog::where('user_id', $author->getKey())
+            ->where('target_id', $targetId)
+            ->where('claim_type', $claimType)
+            ->exists();
     }
 }

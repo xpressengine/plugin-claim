@@ -41,6 +41,8 @@ use Xpressengine\Database\Eloquent\DynamicModel;
  */
 class ClaimLog extends DynamicModel
 {
+    const TABLE_NAME = 'claim_logs';
+
     /**
      * @var string[]
      */

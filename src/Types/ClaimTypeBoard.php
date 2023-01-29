@@ -4,7 +4,6 @@ namespace Xpressengine\Plugins\Claim\Types;
 
 use Xpressengine\User\Models\User;
 use Xpressengine\User\UserInterface;
-use Xpressengine\Plugins\Claim\Handler as ClaimHandler;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportAdminException;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportMyselfException;
 
@@ -33,7 +32,6 @@ class ClaimTypeBoard extends AbstractClaimType
      * @return void
      */
     public function report(
-        ClaimHandler $handler,
         UserInterface $author,
         string $targetId,
         string $shortCut,
@@ -42,26 +40,25 @@ class ClaimTypeBoard extends AbstractClaimType
         /** @var \Xpressengine\Plugins\Board\Models\Board $target */
         $target = \Xpressengine\Plugins\Board\Models\Board::findOrFail($targetId);
 
-        $this->checkReportConditions($handler, $author, $target);
+        $this->checkReportConditions($author, $target);
 
-        parent::report($handler, $author, $targetId, $shortCut, $message);
+        parent::report($author, $targetId, $shortCut, $message);
     }
 
     /**
      * check report conditions
-     * @param ClaimHandler $handler
      * @param UserInterface $author
      * @param $target
      * @return void
      */
     public function checkReportConditions(
-        ClaimHandler $handler,
         UserInterface $author,
         $target
     ) {
-        /** @var \Xpressengine\Plugins\Board\Models\Board $target */
+        assert($target instanceof \Xpressengine\Plugins\Board\Models\Board);
+
         if (($targetUser = $target->getAuthor()) && $targetUser instanceof User) {
-            if ($targetUser->getId() === $author->getId()) {
+            if ($targetUser->getKey() === $author->getKey()) {
                 throw new CantReportMyselfException();
             }
 
@@ -70,6 +67,6 @@ class ClaimTypeBoard extends AbstractClaimType
             }
         }
 
-        parent::checkReportConditions($handler, $author, $target->getId());
+        parent::checkReportConditions($author, $target->getKey());
     }
 }

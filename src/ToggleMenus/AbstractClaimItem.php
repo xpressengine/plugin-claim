@@ -14,6 +14,17 @@ use Xpressengine\ToggleMenu\AbstractToggleMenu;
  */
 abstract class AbstractClaimItem extends AbstractToggleMenu
 {
+    /** @var Handler */
+    protected $claimHandler;
+
+    /**
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->claimHandler = app(Handler::class);
+    }
+
     /**
      * get text
      *
@@ -21,18 +32,9 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
      */
     public function getText()
     {
-        $handler = $this->claimHandler();
-
-        $count = $handler->count($this->identifier);
-        $invoked = $handler->has($this->identifier, Auth::user());
-
         $text = 'xe::claim';
-        if ($invoked === true) {
+        if ($this->claimHandler->has($this->componentType, $this->identifier, Auth::user())) {
             $text = 'xe::cancelClaim';
-        }
-
-        if ($count > 0) {
-            return sprintf('%s (%s)', xe_trans($text), $count);
         }
 
         return xe_trans($text);
@@ -55,15 +57,13 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
      */
     public function getAction()
     {
-        $handler = $this->claimHandler();
-
         XeFrontend::translation([
             'claim::msgClaimReceived',
             'claim::msgClaimCanceled',
             'claim::enterClaimReason'
         ]);
 
-        if ($handler->has($this->identifier, Auth::user()) === true) {
+        if ($this->claimHandler->has($this->componentType, $this->identifier, Auth::user())) {
             return sprintf(
                 'ClaimToggleMenu.destroyClaim(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),
@@ -90,16 +90,5 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
     {
         $path = '/plugins/claim/assets/menu.js';
         return asset(str_replace(base_path(), '', $path));
-    }
-
-    /**
-     * @return Handler
-     */
-    private function claimHandler()
-    {
-        $handler = app('xe.claim.handler');
-        $handler->set($this->componentType);
-
-        return $handler;
     }
 }
