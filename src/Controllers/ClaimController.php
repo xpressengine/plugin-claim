@@ -16,10 +16,9 @@
 
 namespace Xpressengine\Plugins\Claim\Controllers;
 
-use Auth;
-use XePresenter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Facades\XePresenter;
 use Xpressengine\Plugins\Claim\Handler;
 use Xpressengine\Support\Exceptions\LoginRequiredHttpException;
 
@@ -56,7 +55,7 @@ class ClaimController extends Controller
         $targetId = $request->get('targetId');
         $claimType = $request->get('from');
 
-        $invoked = $this->handler->has($claimType, $targetId, Auth::user());
+        $invoked = $this->handler->exists($claimType, $targetId, auth()->user());
         $count = $this->handler->count($claimType, $targetId);
 
         return XePresenter::makeApi([
@@ -70,7 +69,7 @@ class ClaimController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::check() === false) {
+        if (auth()->check() === false) {
             throw new LoginRequiredHttpException;
         }
 
@@ -79,7 +78,7 @@ class ClaimController extends Controller
         $claimType = $request->get('from');
         $message = $request->get('message') ?: '';
 
-        $this->handler->report($claimType, $targetId, Auth::user(), $shortCut, $message);
+        $this->handler->report($claimType, $targetId, auth()->user(), $shortCut, $message);
 
         return $this->index($request);
     }
@@ -92,7 +91,7 @@ class ClaimController extends Controller
         $targetId = $request->get('targetId');
         $claimType = $request->get('from');
 
-        $this->handler->removeByTargetId($claimType, $targetId, Auth::user());
+        $this->handler->removeLogByTargetId($claimType, $targetId, auth()->user());
 
         return $this->index($request);
     }

@@ -33,7 +33,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
     public function getText()
     {
         $text = 'xe::claim';
-        if ($this->claimHandler->has($this->componentType, $this->identifier, Auth::user())) {
+        if ($this->claimHandler->exists($this->componentType, $this->identifier, Auth::user())) {
             $text = 'xe::cancelClaim';
         }
 
@@ -63,7 +63,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
             'claim::enterClaimReason'
         ]);
 
-        if ($this->claimHandler->has($this->componentType, $this->identifier, Auth::user())) {
+        if ($this->claimHandler->exists($this->componentType, $this->identifier, Auth::user())) {
             return sprintf(
                 'ClaimToggleMenu.destroyClaim(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),

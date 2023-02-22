@@ -2,11 +2,12 @@
 
 namespace Xpressengine\Plugins\Claim\Types;
 
-use Xpressengine\User\Models\User;
-use Xpressengine\User\UserInterface;
-use Xpressengine\Plugins\Claim\Exceptions\CantReportAdminException;
-use Xpressengine\Plugins\Claim\Exceptions\CantReportMyselfException;
+use Xpressengine\Plugins\Claim\Handlers\BoardClaimTypeHandler;
 
+/**
+ * Class ClaimTypeBoard
+ * @package Xpressengine\Plugins\Claim\Types
+ */
 class ClaimTypeBoard extends AbstractClaimType
 {
     /**
@@ -19,7 +20,7 @@ class ClaimTypeBoard extends AbstractClaimType
      * text of claim type
      * @var string
      */
-    protected $text = '';
+    protected $text = 'claim::claimTypeBoard';
 
     /**
      * class of claim type
@@ -27,46 +28,8 @@ class ClaimTypeBoard extends AbstractClaimType
      */
     protected $class = '\Xpressengine\Plugins\Board\Models\Board';
 
-    /**
-     * report target
-     * @return void
-     */
-    public function report(
-        UserInterface $author,
-        string $targetId,
-        string $shortCut,
-        string $message = ''
-    ) {
-        /** @var \Xpressengine\Plugins\Board\Models\Board $target */
-        $target = \Xpressengine\Plugins\Board\Models\Board::findOrFail($targetId);
-
-        $this->checkReportConditions($author, $target);
-
-        parent::report($author, $targetId, $shortCut, $message);
-    }
-
-    /**
-     * check report conditions
-     * @param UserInterface $author
-     * @param $target
-     * @return void
-     */
-    public function checkReportConditions(
-        UserInterface $author,
-        $target
-    ) {
-        assert($target instanceof \Xpressengine\Plugins\Board\Models\Board);
-
-        if (($targetUser = $target->getAuthor()) && $targetUser instanceof User) {
-            if ($targetUser->getKey() === $author->getKey()) {
-                throw new CantReportMyselfException();
-            }
-
-            if ($targetUser->isAdmin()) {
-                throw new CantReportAdminException();
-            }
-        }
-
-        parent::checkReportConditions($author, $target->getKey());
+    public function __construct()
+    {
+        $this->handler = app(BoardClaimTypeHandler::class, ['claimType' => $this]);
     }
 }

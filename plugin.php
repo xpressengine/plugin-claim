@@ -1,17 +1,4 @@
 <?php
-/**
- * Plugin
- *
- * PHP version 7
- *
- * @category    Claim
- * @package     Xpressengine\Plugins\Claim
- * @author      XE Developers <developers@xpressengine.com>
- * @copyright   2019 Copyright XEHub Corp. <https://www.xehub.io>
- * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
- * @link        https://xpressengine.io
- */
-
 namespace Xpressengine\Plugins\Claim;
 
 use Route;
@@ -19,21 +6,17 @@ use Schema;
 use XeToggleMenu;
 use Xpressengine\Plugin\AbstractPlugin;
 use Xpressengine\Plugins\Claim\Types;
+use Xpressengine\Plugins\Claim\Models\ClaimLog;
+use Xpressengine\Plugins\Claim\Repositories\ClaimRepository;
 
 /**
- * Claim Plugin
- *
- * @category    Claim
- * @package     Xpressengine\Plugins\Claim
- * @author      XE Developers <developers@xpressengine.com>
- * @copyright   2019 Copyright XEHub Corp. <https://www.xehub.io>
- * @license     http://www.gnu.org/licenses/lgpl-3.0-standalone.html LGPL
- * @link        https://xpressengine.io
+ * Class Plugin
+ * @package Xpressengine\Plugins\Claim
  */
 class Plugin extends AbstractPlugin
 {
     /**
-     * claim types
+     * default claim types
      * @var string[]
      */
     protected $defaultClaimTypes = [
@@ -66,9 +49,15 @@ class Plugin extends AbstractPlugin
         $this->registerRoute();
         $this->registerSettingsMenu();
 
+        ClaimRepository::setModel(ClaimLog::class);
+
         app()->singleton(Handler::class, function () {
             $proxyClass = app('xe.interception')->proxy(Handler::class);
-            return new $proxyClass(app('xe.config'), $this->getActivatableClaimTypes());
+            return new $proxyClass(
+                app(ClaimRepository::class),
+                app('xe.config'),
+                $this->defaultClaimTypes
+            );
         });
         app()->alias(Handler::class, 'xe.claim.handler');
     }
@@ -181,22 +170,5 @@ class Plugin extends AbstractPlugin
         foreach ($menus as $id => $menu) {
             app('xe.register')->push('settings/menu', $id, $menu);
         }
-    }
-
-    /**
-     * get activatable claim types
-     * @return array
-     */
-    public function getActivatableClaimTypes()
-    {
-        $types = [];
-        foreach ($this->defaultClaimTypes as $claimType) {
-            $type = app($claimType);
-            if (assert($type instanceof Types\AbstractClaimType) && class_exists($type->getClass())) {
-                $types[$type->getName()] = $type;
-            }
-        }
-
-        return $types;
     }
 }

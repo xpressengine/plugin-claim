@@ -53,4 +53,28 @@ return [
         'ko' => '잘못된 신고 대상 입니다.',
         'en' => 'Invalid report target'
     ],
+    'statusNew' => [
+        'ko' => '접수중',
+        'en' => 'New'
+    ],
+    'statusProcessing' => [
+        'ko' => '처리중',
+        'en' => 'Processing'
+    ],
+    'statusClosed' => [
+        'ko' => '처리됨',
+        'en' => 'Closed'
+    ],
+    'claimTypeBoard' => [
+        'ko' => '게시물',
+        'en' => 'Board'
+    ],
+    'claimTypeComment' => [
+        'ko' => '댓글',
+        'en' => 'Comment'
+    ],
+    'claimTypeUser' => [
+        'ko' => '유저',
+        'en' => 'User'
+    ],
 ];

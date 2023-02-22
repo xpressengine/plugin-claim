@@ -2,8 +2,7 @@
 
 namespace Xpressengine\Plugins\Claim\Types;
 
-use Xpressengine\User\UserInterface;
-use Xpressengine\Plugins\Claim\Handler as ClaimHandler;
+use Xpressengine\Plugins\Claim\Handlers\AbstractClaimTypeHandler;
 
 /**
  * Class AbstractClaimType
@@ -31,6 +30,11 @@ abstract class AbstractClaimType
     protected $class;
 
     /**
+     * @var AbstractClaimTypeHandler
+     */
+    protected $handler;
+
+    /**
      * get name
      * @return string
      */
@@ -49,7 +53,7 @@ abstract class AbstractClaimType
     }
 
     /**
-     * get class
+     * get target class
      * @return string
      */
     public function getClass()
@@ -58,34 +62,11 @@ abstract class AbstractClaimType
     }
 
     /**
-     * register claim type
-     * @return void
+     * get target claim type handler
+     * @return AbstractClaimTypeHandler
      */
-    public function register()
+    public function getHandler()
     {
-
-    }
-
-    /**
-     * report target
-     * @return void
-     */
-    public function report(UserInterface $author, string $targetId, string $shortCut, string $message = '')
-    {
-        app('xe.claim.handler')->add($this->name, $targetId, $author, $shortCut, $message);
-    }
-
-    /**
-     * check report conditions
-     * @param UserInterface $author
-     * @param T $target
-     * @return void
-     */
-    public function checkReportConditions(UserInterface $author, $target)
-    {
-        // TODO 중복 신고 ON/OFF 기능 추가 후 적용
-        /*if (app('xe.claim.handler')->has($target, $author) === true) {
-            throw new AlreadyClaimedException();
-        }*/
+        return $this->handler;
     }
 }

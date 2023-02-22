@@ -41,11 +41,13 @@ class ClaimLogTable extends Migration
             $table->string('claim_type', 36);
             $table->string('short_cut', 255);
             $table->string('target_id', 36);
+            $table->string('target_user_id', 36);
             $table->string('user_id', 36);
             $table->string('ipaddress', 16);
             $table->string('message', 255);
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->string('admin_message', 255)->nullable();
+            $table->string('status', 255);
+            $table->nullableTimestamps();
 
             $table->index(['target_id', 'user_id']);
             $table->index(['target_id', 'claim_type']);

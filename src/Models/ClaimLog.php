@@ -43,6 +43,25 @@ class ClaimLog extends DynamicModel
 {
     const TABLE_NAME = 'claim_logs';
 
+    /** @var string claim status : new */
+    const STATUS_NEW = 'new';
+    /** @var string claim status : processing */
+    const STATUS_PROCESSING = 'processing';
+    /** @var string claim status : closed */
+    const STATUS_CLOSED = 'closed';
+
+    /** @var string[] claim statuses */
+    const STATUSES = [
+        self::STATUS_NEW => 'claim::statusNew',
+        self::STATUS_PROCESSING => 'claim::statusProcessing',
+        self::STATUS_CLOSED => 'claim::statusClosed'
+    ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = true;
+
     /**
      * @var string[]
      */
@@ -50,12 +69,20 @@ class ClaimLog extends DynamicModel
 
     /**
      * user
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * target user
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function targetUser()
+    {
+        return $this->belongsTo(User::class, 'target_user_id');
     }
 
     /**
