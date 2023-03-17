@@ -4,7 +4,7 @@ namespace Xpressengine\Plugins\Claim\ToggleMenus;
 
 use Auth;
 use XeFrontend;
-use Xpressengine\Plugins\Claim\Handler;
+use Xpressengine\Plugins\Claim\ClaimHandler;
 use Xpressengine\ToggleMenu\AbstractToggleMenu;
 
 /**
@@ -14,7 +14,7 @@ use Xpressengine\ToggleMenu\AbstractToggleMenu;
  */
 abstract class AbstractClaimItem extends AbstractToggleMenu
 {
-    /** @var Handler */
+    /** @var ClaimHandler */
     protected $claimHandler;
 
     /**
@@ -22,7 +22,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
      */
     public function __construct()
     {
-        $this->claimHandler = app(Handler::class);
+        $this->claimHandler = app(ClaimHandler::class);
     }
 
     /**
@@ -33,7 +33,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
     public function getText()
     {
         $text = 'xe::claim';
-        if ($this->claimHandler->exists($this->componentType, $this->identifier, Auth::user())) {
+        if ($this->claimHandler->exists($this->componentType, Auth::user(), $this->identifier)) {
             $text = 'xe::cancelClaim';
         }
 
@@ -51,6 +51,15 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
     }
 
     /**
+     * get target class
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
      * get toggle menu action
      *
      * @return string
@@ -63,7 +72,7 @@ abstract class AbstractClaimItem extends AbstractToggleMenu
             'claim::enterClaimReason'
         ]);
 
-        if ($this->claimHandler->exists($this->componentType, $this->identifier, Auth::user())) {
+        if ($this->claimHandler->exists($this->componentType, Auth::user(), $this->identifier)) {
             return sprintf(
                 'ClaimToggleMenu.destroyClaim(event, "%s", "%s", "%s")',
                 route('fixed.claim.destroy'),

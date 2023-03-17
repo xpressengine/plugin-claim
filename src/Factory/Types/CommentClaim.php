@@ -1,19 +1,32 @@
 <?php
 
-namespace Xpressengine\Plugins\Claim\Handlers;
+namespace Xpressengine\Plugins\Claim\Factory\Types;
 
 use Xpressengine\User\Models\User;
 use Xpressengine\User\UserInterface;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportAdminException;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportMyselfException;
 
-/**
- * Class BoardClaimTypeHandler
- * @package Xpressengine\Plugins\Claim\Types
- * @template T
- */
-class BoardClaimTypeHandler extends AbstractClaimTypeHandler
+class CommentClaim extends AbstractClaimType
 {
+    /**
+     * claim type
+     * @var string
+     */
+    protected $name = 'comment';
+
+    /**
+     * text of claim type
+     * @var string
+     */
+    protected $text = 'claim::claimTypeComment';
+
+    /**
+     * class of claim type
+     * @var string
+     */
+    protected $class = '\Xpressengine\Plugins\Comment\Models\Comment';
+
     /**
      * report target
      * @return void
@@ -25,8 +38,8 @@ class BoardClaimTypeHandler extends AbstractClaimTypeHandler
         string $message = '',
         string $targetUserId = ''
     ) {
-        /** @var \Xpressengine\Plugins\Board\Models\Board $target */
-        $target = \Xpressengine\Plugins\Board\Models\Board::findOrFail($targetId);
+        /** @var \Xpressengine\Plugins\Comment\Models\Comment $target */
+        $target = \Xpressengine\Plugins\Comment\Models\Comment::findOrFail($targetId);
 
         $this->checkReportConditions($author, $target);
 
@@ -43,7 +56,7 @@ class BoardClaimTypeHandler extends AbstractClaimTypeHandler
         UserInterface $author,
         $target
     ) {
-        assert($target instanceof \Xpressengine\Plugins\Board\Models\Board);
+        assert($target instanceof \Xpressengine\Plugins\Comment\Models\Comment);
 
         if (($targetUser = $target->getAuthor()) && $targetUser instanceof User) {
             if ($targetUser->getKey() === $author->getKey()) {
@@ -55,6 +68,6 @@ class BoardClaimTypeHandler extends AbstractClaimTypeHandler
             }
         }
 
-        parent::checkReportConditions($author, $target->getKey());
+        parent::checkReportConditions($author, $target->id);
     }
 }

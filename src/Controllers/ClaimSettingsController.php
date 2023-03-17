@@ -20,7 +20,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Facades\XeDB;
 use App\Facades\XePresenter;
-use Xpressengine\Plugins\Claim\Handler;
+use Xpressengine\Plugins\Claim\ClaimHandler;
+use Xpressengine\Plugins\Claim\Factory\ClaimFactory;
 use Xpressengine\Plugins\Claim\Models\ClaimLog;
 
 /**
@@ -36,16 +37,22 @@ use Xpressengine\Plugins\Claim\Models\ClaimLog;
 class ClaimSettingsController extends Controller
 {
     /**
-     * @var Handler
+     * @var ClaimHandler
      */
     protected $handler;
 
     /**
+     * @var ClaimFactory
+     */
+    protected $factory;
+
+    /**
      * @return void
      */
-    public function __construct(Handler $handler)
+    public function __construct(ClaimHandler $handler, ClaimFactory $factory)
     {
         $this->handler = $handler;
+        $this->factory = $factory;
     }
 
     /**
@@ -54,7 +61,7 @@ class ClaimSettingsController extends Controller
     public function index(Request $request)
     {
         $paginate = $this->handler->paginateClaimLogs($request->all());
-        $claimTypes = $this->handler->getActivateClaimTypes();
+        $claimTypes = $this->factory->getActivateTypes();
         $claimStatuses = ClaimLog::STATUSES;
 
         return XePresenter::make('claim::views.settings.index', [
@@ -70,7 +77,7 @@ class ClaimSettingsController extends Controller
      */
     public function edit(string $id)
     {
-        $log = $this->handler->findLogOrFail($id);
+        $log = $this->handler->findOrFail($id);
         $claimStatuses = ClaimLog::STATUSES;
         $targetClaimTypeText = xe_trans($this->handler->getClaimTypeByKey($log->claim_type)->getText());
 
@@ -114,7 +121,7 @@ class ClaimSettingsController extends Controller
      */
     public function delete(string $id)
     {
-        $this->handler->removeLog($id);
+        $this->handler->delete($id);
 
         return redirect()->back()->with('alert', ['type' => 'success', 'message' => xe_trans('xe::deleted')]);
     }

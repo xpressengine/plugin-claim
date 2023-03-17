@@ -1,21 +1,34 @@
 <?php
 
-namespace Xpressengine\Plugins\Claim\Handlers;
+namespace Xpressengine\Plugins\Claim\Factory\Types;
 
 use Xpressengine\User\Models\User;
 use Xpressengine\User\UserInterface;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportAdminException;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportMyselfException;
-use Xpressengine\Plugins\Claim\Exceptions\GuestCannotReportException;
 use Xpressengine\Plugins\Claim\Exceptions\CantReportWithdrawnUserException;
+use Xpressengine\Plugins\Claim\Exceptions\GuestCannotReportException;
 
-/**
- * Class UserClaimTypeHandler
- * @package Xpressengine\Plugins\Claim\Types
- * @template T
- */
-class UserClaimTypeHandler extends AbstractClaimTypeHandler
+class UserClaim extends AbstractClaimType
 {
+    /**
+     * claim type
+     * @var string
+     */
+    protected $name = 'user';
+
+    /**
+     * text of claim type
+     * @var string
+     */
+    protected $text = 'claim::claimTypeUser';
+
+    /**
+     * class of claim type
+     * @var string
+     */
+    protected $class = '\Xpressengine\User\Models\User';
+
     /**
      * report target
      * @return void

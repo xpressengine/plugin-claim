@@ -19,7 +19,8 @@ namespace Xpressengine\Plugins\Claim\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Facades\XePresenter;
-use Xpressengine\Plugins\Claim\Handler;
+use Xpressengine\Plugins\Claim\ClaimHandler;
+use Xpressengine\Plugins\Claim\Factory\ClaimFactory;
 use Xpressengine\Support\Exceptions\LoginRequiredHttpException;
 
 /**
@@ -35,7 +36,7 @@ use Xpressengine\Support\Exceptions\LoginRequiredHttpException;
 class ClaimController extends Controller
 {
     /**
-     * @var Handler
+     * @var ClaimHandler
      */
     protected $handler;
 
@@ -55,7 +56,7 @@ class ClaimController extends Controller
         $targetId = $request->get('targetId');
         $claimType = $request->get('from');
 
-        $invoked = $this->handler->exists($claimType, $targetId, auth()->user());
+        $invoked = $this->handler->exists($claimType, auth()->user(), $targetId);
         $count = $this->handler->count($claimType, $targetId);
 
         return XePresenter::makeApi([
@@ -67,18 +68,20 @@ class ClaimController extends Controller
     /**
      * @return \Xpressengine\Presenter\Presentable
      */
-    public function store(Request $request)
+    public function store(ClaimFactory $factory, Request $request)
     {
         if (auth()->check() === false) {
             throw new LoginRequiredHttpException;
         }
 
+        $author = auth()->user();
         $targetId = $request->get('targetId');
         $shortCut = $request->get('shortCut');
         $claimType = $request->get('from');
         $message = $request->get('message') ?: '';
 
-        $this->handler->report($claimType, $targetId, auth()->user(), $shortCut, $message);
+        $targetClaimType = $factory->make($claimType);
+        $targetClaimType->report($author, $targetId, $shortCut, $message);
 
         return $this->index($request);
     }
@@ -91,7 +94,7 @@ class ClaimController extends Controller
         $targetId = $request->get('targetId');
         $claimType = $request->get('from');
 
-        $this->handler->removeLogByTargetId($claimType, $targetId, auth()->user());
+        $this->handler->deleteByTargetId($claimType, $targetId, auth()->user());
 
         return $this->index($request);
     }

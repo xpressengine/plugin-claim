@@ -4,19 +4,14 @@ namespace Xpressengine\Plugins\Claim;
 
 use App\Facades\XeDB;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Xpressengine\Plugins\Claim\Factory\ClaimFactory;
 use Xpressengine\User\UserInterface;
 use Xpressengine\Config\ConfigManager;
 use Xpressengine\Plugins\Claim\Models\ClaimLog;
-use Xpressengine\Plugins\Claim\Types\AbstractClaimType;
 use Xpressengine\Plugins\Claim\Repositories\ClaimRepository;
-use Xpressengine\Plugins\Claim\Exceptions\ClaimException;
-use Xpressengine\Plugins\Claim\Exceptions\NotFoundClaimTargetException;
-use Xpressengine\Plugins\Claim\Exceptions\NotSupportClaimTypeException;
 
-class Handler
+class ClaimHandler
 {
     /** @var ClaimRepository */
     protected $repository;
@@ -27,11 +22,6 @@ class Handler
     protected $configManager;
 
     /**
-     * @var array<string, AbstractClaimType>
-     */
-    protected $activateClaimTypes = [];
-
-    /**
      * @var string
      */
     const CONFIG_NAME = 'Claim';
@@ -39,43 +29,11 @@ class Handler
     /**
      * @param ClaimRepository $repository
      * @param ConfigManager $configManager
-     * @param array $defaultClaimTypeClasses
      */
-    public function __construct(
-        ClaimRepository $repository,
-        ConfigManager $configManager,
-        array $defaultClaimTypeClasses
-    ) {
+    public function __construct(ClaimRepository $repository, ConfigManager $configManager)
+    {
         $this->repository = $repository;
         $this->configManager = $configManager;
-        $this->activateClaimTypes = [];
-
-        foreach ($defaultClaimTypeClasses as $class) {
-            $targetClaimType = app($class);
-            assert($targetClaimType instanceof Types\AbstractClaimType);
-            $this->registerClaimType($targetClaimType);
-        }
-    }
-
-    /**
-     * claim type 등록
-     * @param AbstractClaimType $claimType
-     * @return void
-     */
-    public function registerClaimType(AbstractClaimType $claimType)
-    {
-        if (!array_key_exists($claimType->getName(), $this->activateClaimTypes) && class_exists($claimType->getClass())) {
-            $this->activateClaimTypes[$claimType->getName()] = $claimType;
-        }
-    }
-
-    /**
-     * 활성화된 claim types 를 반환
-     * @return array|AbstractClaimType[]
-     */
-    public function getActivateClaimTypes()
-    {
-        return $this->activateClaimTypes;
     }
 
     /**
@@ -83,7 +41,7 @@ class Handler
      * @param string $id
      * @return ClaimLog
      */
-    public function findLogOrFail(string $id)
+    public function findOrFail(string $id)
     {
         return $this->repository->findOrFail($id);
     }
@@ -102,28 +60,14 @@ class Handler
     }
 
     /**
-     * 해당 키의 claim type을 반환
-     * @param string $claimType
-     * @return AbstractClaimType
-     */
-    public function getClaimTypeByKey(string $claimType)
-    {
-        if (!array_key_exists($claimType, $this->activateClaimTypes)) {
-            throw new NotSupportClaimTypeException();
-        }
-
-        return $this->activateClaimTypes[$claimType];
-    }
-
-    /**
      * 신고 로그 삭제
      * @param string $id
      * @return bool|null
      * @throws \Exception
      */
-    public function removeLog(string $id)
+    public function delete(string $id)
     {
-        return $this->findLogOrFail($id)->delete();
+        return $this->repository->findOrFail($id)->delete();
     }
 
     /**
@@ -133,7 +77,7 @@ class Handler
      * @param UserInterface $author
      * @return mixed
      */
-    public function removeLogByTargetId(string $claimType, string $targetId, UserInterface $author)
+    public function deleteByTargetId(string $claimType, string $targetId, UserInterface $author)
     {
         return $this->repository->where('user_id', $author->getKey())
             ->where('target_id', $targetId)
@@ -145,6 +89,7 @@ class Handler
      * 대상을 신고
      * @param string $claimType
      * @param string $targetId
+     * @param string $targetUserId
      * @param UserInterface $author
      * @param string $shortCut
      * @param string $message
@@ -153,50 +98,12 @@ class Handler
     public function report(
         string $claimType,
         string $targetId,
-        UserInterface $author,
-        string $shortCut,
-        string $message = ''
-    ) {
-        XeDB::beginTransaction();
-
-        try {
-            $claimType = $this->getClaimTypeByKey($claimType);
-            $handler = $claimType->getHandler();
-            $handler->report($author, $targetId, $shortCut, $message);
-        } catch (ClaimException $e) {
-            XeDB::rollback();
-            throw $e;
-        } catch (ModelNotFoundException $e) {
-            XeDB::rollback();
-            throw new NotFoundClaimTargetException();
-        } catch (\Exception $e) {
-            XeDB::rollback();
-            Log::error($e);
-            throw new ClaimException();
-        }
-
-        XeDB::commit();
-    }
-
-    /**
-     * 신고 로그 등록
-     * @param string $claimType
-     * @param string $targetId
-     * @param string $targetUserId
-     * @param UserInterface $author
-     * @param string $shortCut
-     * @param string $message
-     * @return ClaimLog
-     */
-    public function addLog(
-        string $claimType,
-        string $targetId,
         string $targetUserId,
         UserInterface $author,
         string $shortCut,
         string $message = ''
     ) {
-        if ($this->exists($claimType, $targetId, $author) === true) {
+        if ($this->exists($claimType, $author, $targetId) === true) {
             throw new Exceptions\AlreadyClaimedException;
         }
 
@@ -215,11 +122,11 @@ class Handler
     /**
      * 신고 여부
      * @param string $claimType
-     * @param string $targetId
      * @param UserInterface $author
+     * @param string $targetId
      * @return bool
      */
-    public function exists(string $claimType, string $targetId, UserInterface $author)
+    public function exists(string $claimType, UserInterface $author, string $targetId)
     {
         return $this->repository->where('user_id', $author->getKey())
             ->where('target_id', $targetId)
@@ -236,7 +143,7 @@ class Handler
      */
     public function updateLog(string $id, string $status, string $adminMessage = '')
     {
-        $log = $this->findLogOrFail($id);
+        $log = $this->findOrFail($id);
 
         if (!array_key_exists($status, ClaimLog::STATUSES)) {
             throw new \UnexpectedValueException('Invalid Claim status');
@@ -260,8 +167,10 @@ class Handler
         $this->applyFiltersToClaimLogs($query, $inputs);
         $logs = $query->paginate();
 
-        $logs->setCollection($logs->getCollection()->map(function ($log) {
-            $log->claim_type_text = xe_trans($this->getClaimTypeByKey($log->claim_type)->getText());
+        /** @var ClaimFactory $claimFactory */
+        $claimFactory = app(ClaimFactory::class);
+        $logs->setCollection($logs->getCollection()->map(function ($log) use ($claimFactory) {
+            $log->claim_type_text = xe_trans($claimFactory->make($log->claim_type)->getText());
             return $log;
         }));
 

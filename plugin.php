@@ -1,12 +1,11 @@
 <?php
 namespace Xpressengine\Plugins\Claim;
 
-use Route;
-use Schema;
-use XeToggleMenu;
+use Illuminate\Support\Facades\Route;
+use App\Facades\XeToggleMenu;
 use Xpressengine\Plugin\AbstractPlugin;
-use Xpressengine\Plugins\Claim\Types;
 use Xpressengine\Plugins\Claim\Models\ClaimLog;
+use Xpressengine\Plugins\Claim\Factory\ClaimFactory;
 use Xpressengine\Plugins\Claim\Repositories\ClaimRepository;
 
 /**
@@ -15,16 +14,6 @@ use Xpressengine\Plugins\Claim\Repositories\ClaimRepository;
  */
 class Plugin extends AbstractPlugin
 {
-    /**
-     * default claim types
-     * @var string[]
-     */
-    protected $defaultClaimTypes = [
-        Types\ClaimTypeUser::class,
-        Types\ClaimTypeBoard::class,
-        Types\ClaimTypeComment::class,
-    ];
-
     /**
      * @var Migrations\MigrationResource
      */
@@ -51,15 +40,15 @@ class Plugin extends AbstractPlugin
 
         ClaimRepository::setModel(ClaimLog::class);
 
-        app()->singleton(Handler::class, function () {
-            $proxyClass = app('xe.interception')->proxy(Handler::class);
-            return new $proxyClass(
-                app(ClaimRepository::class),
-                app('xe.config'),
-                $this->defaultClaimTypes
-            );
+        app()->singleton(ClaimHandler::class, function () {
+            $proxyClass = app('xe.interception')->proxy(ClaimHandler::class);
+            return new $proxyClass(app(ClaimRepository::class), app('xe.config'));
         });
-        app()->alias(Handler::class, 'xe.claim.handler');
+        app()->alias(ClaimHandler::class, 'xe.claim.handler');
+
+        app()->singleton(ClaimFactory::class, function () {
+            return new ClaimFactory(app(ClaimHandler::class));
+        });
     }
 
     /**
