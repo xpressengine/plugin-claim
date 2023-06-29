@@ -16,27 +16,21 @@
 
 namespace Xpressengine\Plugins\Claim\Models;
 
-use Xpressengine\Config\ConfigEntity;
-use Xpressengine\Database\Eloquent\DynamicModel;
-use Xpressengine\Document\Exceptions\NotAllowedTypeException;
-use Xpressengine\Document\Exceptions\DocumentNotFoundException;
-use Xpressengine\Document\Exceptions\ReplyLimitationException;
-use Xpressengine\Document\Exceptions\ValueRequiredException;
-use Illuminate\Database\Eloquent\Builder as OriginBuilder;
 use Xpressengine\User\Models\User;
+use Xpressengine\Database\Eloquent\DynamicModel;
 
 /**
  * ClaimLog
  *
  * @property int    id
- * @property string claimType
- * @property string shortCut
- * @property string targetId
- * @property string uiserId
+ * @property string claim_type
+ * @property string short_cut
+ * @property string target_id
+ * @property string user_id
  * @property string ipaddress
  * @property string message
- * @property string createdAt
- * @property string updatedAt
+ * @property string created_at
+ * @property string updated_at
  *
  * @category    Claim
  * @package     Xpressengine\Plugins\Claim
@@ -47,6 +41,27 @@ use Xpressengine\User\Models\User;
  */
 class ClaimLog extends DynamicModel
 {
+    const TABLE_NAME = 'claim_logs';
+
+    /** @var string claim status : new */
+    const STATUS_NEW = 'new';
+    /** @var string claim status : processing */
+    const STATUS_PROCESSING = 'processing';
+    /** @var string claim status : closed */
+    const STATUS_CLOSED = 'closed';
+
+    /** @var string[] claim statuses */
+    const STATUSES = [
+        self::STATUS_NEW => 'claim::statusNew',
+        self::STATUS_PROCESSING => 'claim::statusProcessing',
+        self::STATUS_CLOSED => 'claim::statusClosed'
+    ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = true;
+
     /**
      * @var string[]
      */
@@ -54,12 +69,20 @@ class ClaimLog extends DynamicModel
 
     /**
      * user
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * target user
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function targetUser()
+    {
+        return $this->belongsTo(User::class, 'target_user_id');
     }
 
     /**

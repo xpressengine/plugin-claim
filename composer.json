@@ -21,11 +21,6 @@
       "title": "신고",
       "icon": "icon.png",
       "component": {
-        "claim/settingsSkin/claim@default": {
-          "class": "Xpressengine\\Plugins\\Claim\\Skin\\SettingsSkin",
-          "name": "신고하기 관리자 기본 스킨",
-          "description": "기본스킨."
-        },
         "module/board@board/toggleMenu/claim@boardClaimItem": {
           "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\BoardClaimItem",
           "name": "게시판 신고 토글 메뉴",
@@ -34,6 +29,11 @@
         "comment/toggleMenu/claim@commentClaimItem": {
           "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\CommentClaimItem",
           "name": "댓글 신고 토글 메뉴",
+          "description": ""
+        },
+        "user/toggleMenu/claim@userClaimItem": {
+          "class": "Xpressengine\\Plugins\\Claim\\ToggleMenus\\UserClaimItem",
+          "name": "유저 신고 토글 메뉴",
           "description": ""
         }
       }
